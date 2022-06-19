@@ -7,24 +7,27 @@ var hbs = require('express-handlebars');
 var indexRouter = require('./routes/index');
 var vendorRouter = require('./routes/vendor');
 var adminRouter = require('./routes/admin');
-
+var session = require('express-session');
+const nocache = require("nocache");
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-app.engine('hbs', hbs.engine({extname: 'hbs',defaultLayout: 'layout', layoutsDir:__dirname + '/views/layout', partialDir:__dirname + '/views/partials'})); 
+app.engine('hbs', hbs.engine({helpers:{inc: function(value, option){
+  return parseInt(value)+1;
+}},extname: 'hbs',defaultLayout: 'layout', layoutsDir:__dirname + '/views/layout', partialDir:__dirname + '/views/partials'})); 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(session({ secret: "bro", resave:false,saveUninitialized:true, cookie: { maxAge: 700000 } }));
 app.use('/', indexRouter);
 app.use('/vendor', vendorRouter);
 app.use('/admin', adminRouter);
-
+app.use(nocache());
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

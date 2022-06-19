@@ -1,22 +1,14 @@
- <h1 class="text-center text-success">
-        Welcome to GeeksforGeeks
-    </h1>
-    <p class="text-center">
-        FORM VALIDATION USING JQUERY
-    </p>
- 
- 
-    <div class="container">
+   <div class="container">
         <div class="col-lg-8
         m-auto d-block">
-            <form>
+            <form action="/vendor/signup" method="post">
                 <div class="form-group">
                     <label for="user">
                         Username:
                     </label>
-                    <input type="text" name="username" id="usernames" class="form-control">
+                    <input type="text" name="name" id="usernames" class="form-control">
                     <h5 id="usercheck" style="color: red;">
-                        **Username is missing
+                        Username is missing
                     </h5>
                 </div>
                  
@@ -30,14 +22,34 @@
                         Your email must be a valid email
                     </small>
                 </div>
+
+                <div class="form-group">
+                    <label for="user">
+                        Hotelname:
+                    </label>
+                    <input type="text" name="hotelname" id="hotelName" class="form-control">
+                    <h5 id="usercheck" style="color: red;">
+                        
+                    </h5>
+                </div>
+
+                 <div class="form-group">
+                    <label for="user">
+                        Hotelname:
+                    </label>
+                    <input type="text" name="phoneNumber" id="hotelName" class="form-control">
+                    <h5 id="usercheck" style="color: red;">
+                        
+                    </h5>
+                </div>
  
                 <div class="form-group">
                     <label for="password">
                         Password:
                     </label>
-                    <input type="password" name="pass" id="password" class="form-control">
+                    <input type="password" name="password" id="password" class="form-control">
                     <h5 id="passcheck" style="color: red;">
-                        **Please Fill the password
+                        Please Fill the password
                     </h5>
                 </div>
  
@@ -47,7 +59,7 @@
                     </label>
                     <input type="password" name="username" id="conpassword" class="form-control">
                     <h5 id="conpasscheck" style="color: red;">
-                        **Password didn't match
+                        Password didn't match
                     </h5>
                 </div>
  
@@ -69,6 +81,7 @@
 $(document).ready(function () {
   // Validate Username
   $("#usercheck").hide();
+  $("#hoelname").hide();
   let usernameError = true;
   $("#usernames").keyup(function () {
     validateUsername();
@@ -82,7 +95,39 @@ $(document).ready(function () {
       return false;
     } else if (usernameValue.length < 3 || usernameValue.length > 10) {
       $("#usercheck").show();
-      $("#usercheck").html("**length of username must be between 3 and 10");
+      $("#usercheck").html("length of username must be between 3 and 10");
+      usernameError = false;
+      return false;
+    } else {
+      $("#usercheck").hide();
+    }
+  }
+
+  function validatehotelName() {
+    let usernameValue = $("#hotelName").val();
+    if (usernameValue.length == "") {
+      $("#usercheck").show();
+      usernameError = false;
+      return false;
+    } else if (usernameValue.length < 3 || usernameValue.length > 10) {
+      $("#usercheck").show();
+      $("#usercheck").html("length of username must be between 3 and 10");
+      usernameError = false;
+      return false;
+    } else {
+      $("#usercheck").hide();
+    }
+  }
+
+  function validateUsername() {
+    let usernameValue = $("#usernames").val();
+    if (usernameValue.length == "") {
+      $("#usercheck").show();
+      usernameError = false;
+      return false;
+    } else if (usernameValue.length < 3 || usernameValue.length > 10) {
+      $("#usercheck").show();
+      $("#usercheck").html("length of username must be between 3 and 10");
       usernameError = false;
       return false;
     } else {
@@ -120,7 +165,7 @@ $(document).ready(function () {
     if (passwordValue.length < 3 || passwordValue.length > 10) {
       $("#passcheck").show();
       $("#passcheck").html(
-        "**length of your password must be between 3 and 10"
+        "length of your password must be between 3 and 10"
       );
       $("#passcheck").css("color", "red");
       passwordError = false;
@@ -141,7 +186,7 @@ $(document).ready(function () {
     let passwordValue = $("#password").val();
     if (passwordValue != confirmPasswordValue) {
       $("#conpasscheck").show();
-      $("#conpasscheck").html("**Password didn't Match");
+      $("#conpasscheck").html("Password didn't Match");
       $("#conpasscheck").css("color", "red");
       confirmPasswordError = false;
       return false;

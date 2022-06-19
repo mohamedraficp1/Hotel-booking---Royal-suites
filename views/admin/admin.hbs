@@ -14,7 +14,7 @@
                      <div class="user_profle_side">
                         <div class="user_img"><img class="img-responsive" src="/admin/images/layout_img/user_img.jpg" alt="#" /></div>
                         <div class="user_info">
-                           <h6>John David</h6>
+                           <h6>Admin </h6>
                            <p><span class="online_animation"></span> Online</p>
                         </div>
                      </div>
@@ -101,12 +101,12 @@
                               </ul>
                               <ul class="user_profile_dd">
                                  <li>
-                                    <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="/admin/images/layout_img/user_img.jpg" alt="#" /><span class="name_user">John David</span></a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="/admin/images/layout_img/user_img.jpg" alt="#" /><span class="name_user">Admin </span></a>
                                     <div class="dropdown-menu">
                                        <a class="dropdown-item" href="profile.html">My Profile</a>
                                        <a class="dropdown-item" href="settings.html">Settings</a>
                                        <a class="dropdown-item" href="help.html">Help</a>
-                                       <a class="dropdown-item" href="#"><span>Log Out</span> <i class="fa fa-sign-out"></i></a>
+                                       <a class="dropdown-item" href="/admin/logout"><span>Log Out</span> <i class="fa fa-sign-out"></i></a>
                                     </div>
                                  </li>
                               </ul>
@@ -117,7 +117,7 @@
                </div>
                <!-- end topbar -->
                <!-- dashboard inner -->
-               <div class="midde_cont">
+               {{!-- <div class="midde_cont">
                   <div class="container-fluid">
                      <div class="row column_title">
                         <div class="col-md-12">
@@ -469,9 +469,85 @@
                         </p>
                      </div>
                   </div>
-               </div>
+               </div> --}}
                <!-- end dashboard inner -->
+               <form class="form-inline mt-5" action="/admin/add-category" method="post">
+                  
+                  <div class="form-group mx-sm-3 mb-2">
+                     <label for="inputPassword2" class="sr-only">Password</label>
+                     <input type="text" class="form-control" id="inputPassword2" name="category" placeholder="Category">
+                  </div>
+                  <button type="submit" class="btn btn-primary mb-2">Add Room Category</button>
+               </form>
+
+              <table class="display table" id="table_id">
+        <thead>
+          <tr>
+            <th>Sl No</th>
+            <th>Category</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+           {{#each data.category}}
+            <tr>
+              <td>{{inc @index}}</td>
+              
+                 <td>{{this.categoryName}}</td>
+               <td><a href="/admin/edit-category/{{this._id}}" class="btn btn-primary">Edit</a>
+              <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger">Delete</a></td>
+              
+            </tr>
+            {{/each}}
+   
+        </tbody>
+      </table>
+   <h1>Vendor Datails</h1>
+  <table class="display table" id="table_id">
+        <thead>
+          <tr>
+            <th>Sl No</th>
+            <th>Category</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+            {{#each vendorData.vendors}}
+            <tr>
+              <td>{{inc @index}}</td>
+              <form action="/admin/update-category" method="post">
+                 <td><input id="category-input" class="border-0" type="text" value="{{this.vendorNmae}}" name="editingCategory" disabled></td>
+               <td><a class="btn btn-primary">Edit</a>
+              <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger">Delete</a></td>
+              </form>
+            </tr>
+            {{/each}}
+   
+        </tbody>
+      </table>
+
+
+
+
+     
             </div>
          </div>
       </div>
+      <script>
+         const btn = document.getElementById('category-input');
+         document.getElementById("save-button").style.display="none";
+
+         function enableEdit() {
+           btn.removeAttribute('disabled');
+           document.getElementById("edit-button").style.display="none";
+          document.getElementById("save-button").style.display="inline-block";
+         }
+
+
+         $(document).ready( function () {
+            $('#table_id').wrap('<div id="hide" style="display:none"/>');
+                  $('#hide').css( 'display', 'block' );
+            } );
+         var table = $('#table_id').DataTable();
+      </script>
       
