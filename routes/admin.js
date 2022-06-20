@@ -11,7 +11,10 @@ router.get('/', function(req, res, next) {
   if(req.session.adminloggedIn){
     adminHelper.getCategory().then((data)=>{
       adminHelper.getVendors().then((vendorData)=>{
-        res.render('admin/admin', { admin: true, data:data, vendorData:vendorData });
+      adminHelper.getApprovedVendors().then((approvedVendor)=>{
+        res.render('admin/admin', { admin: true, data:data, vendorData:vendorData,approvedVendor:approvedVendor });
+      })
+        
       })
       
     })
@@ -69,7 +72,14 @@ router.get('/delete-category/:id',function(req, res) {
     })
 })
 
-router.post('/update-category/:id',function(req, res) {
+router.get('/approve-vendor/:id',function(req, res) {
+  let id= mongoose.Types.ObjectId(req.params.id)
+  adminHelper.approveVendor(id).then((resp)=>{
+    res.redirect('/admin')
+  })
+})
+
+router.post('/edit-category/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
   adminHelper.updateCategory(id,req.body) .then((resp)=>{
     console.log(req.body)

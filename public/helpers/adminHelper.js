@@ -43,7 +43,9 @@ module.exports={
                 phoneNumber: userData.phoneNumber,
                 hotelNmae: userData.hotelNmae,
                 email: userData.email,
-                password: userData.password} 
+                password: userData.password,
+                isVerified: "pending"
+            } 
             }
                 
             }).then((data)=>{
@@ -58,12 +60,50 @@ module.exports={
             let displayVendor = await Admin.aggregate([
                 {
                     $project:{
-                        vendors: 1
+                        _id:0,
+                        vendors:{
+                            $filter:{
+                                input: '$vendors',
+                                as:'vendors',
+                                cond: {
+                                    $eq: [
+                                        '$$vendors.isVerified',"pending",
+                                    ]
+                                },
+                                
+                            }, 
+                        },
                     }
                 }
             ])
             resolve(displayVendor[0])
             console.log(displayVendor)
+        })
+    },
+
+    getApprovedVendors : ()=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let displayApprovedVendor = await Admin.aggregate([
+                {
+                    $project:{
+                        _id:0,
+                        vendors:{
+                            $filter:{
+                                input: '$vendors',
+                                as:'vendors',
+                                cond: {
+                                    $eq: [
+                                        '$$vendors.isVerified',"approved",
+                                    ]
+                                },
+                                
+                            }, 
+                        },
+                    }
+                }
+            ])
+            resolve(displayApprovedVendor[0])
+           
         })
     },
 
@@ -107,9 +147,25 @@ module.exports={
             resolve(deleteCategory)
         })
     },
+
+    approveVendor:(id)=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let approvevendor = await Admin.updateOne({'vendors._id': id},{$set : {'vendors.$.isVerified': "approved"}})
+            resolve(approvevendor)
+        })
+    },
+
+    getCategoryDetail:(categoryId)=> {
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.USER_COLLECTION).findOne({'vendors._id':objectId(categoryId)}).then((user)=>{
+                resolve(user)
+                
+            })
+        })
+    },
     updateCategory:(id,categoryData)=> {
         return new Promise(async (resolve, reject)=> {
-            let updateCategoryone= await Admin.updateOne({'category._id': id},{$set: {'category.$.categoryName': categoryData.editingCategory}})
+            let updateCategoryone= await Admin.updateOne({'category._id': id},{$set: {'category.$.categoryName': categoryData.categoryEdit}})
             resolve(updateCategoryone)
         })
     }

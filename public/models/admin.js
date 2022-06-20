@@ -16,6 +16,7 @@ const adminSchema = new mongoose.Schema({
             hotelNmae: String,
             email: String,
             password: String,
+            isVerified: String
         }
     ]
 })

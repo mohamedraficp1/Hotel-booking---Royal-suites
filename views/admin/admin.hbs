@@ -489,20 +489,45 @@
           </tr>
         </thead>
         <tbody>
-           {{#each data.category}}
+        {{#each data.category}}
             <tr>
               <td>{{inc @index}}</td>
-              
+             
                  <td>{{this.categoryName}}</td>
-               <td><a href="/admin/edit-category/{{this._id}}" class="btn btn-primary">Edit</a>
+               <td>
+               <button type="button"  href="/admin/edit-category/{{this._id}}" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{this._id}}">
+  Edit Category
+</button>
               <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger">Delete</a></td>
-              
+              </form>
             </tr>
+              <!-- Modal -->
+<div class="modal fade" id="exampleModal{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/admin/edit-category/{{this._id}}" method="post">
+           <input name="categoryEdit" type="text" value="{{this.categoryName}}">
+           <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
             {{/each}}
    
         </tbody>
       </table>
-   <h1>Vendor Datails</h1>
+   <h1>Vendor Approval Request</h1>
   <table class="display table" id="table_id">
         <thead>
           <tr>
@@ -517,19 +542,41 @@
               <td>{{inc @index}}</td>
               <form action="/admin/update-category" method="post">
                  <td><input id="category-input" class="border-0" type="text" value="{{this.vendorNmae}}" name="editingCategory" disabled></td>
-               <td><a class="btn btn-primary">Edit</a>
-              <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger">Delete</a></td>
+               <td><a  href="/admin/approve-vendor/{{this._id}}" class="btn btn-primary">Approve</a>
+              <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger">Reject</a></td>
               </form>
             </tr>
+          
             {{/each}}
    
         </tbody>
       </table>
 
+       <h1>Approved Vendor Dtails</h1>
+  <table class="display table" id="table_id_2">
+        <thead>
+          <tr>
+            <th>Sl No</th>
+            <th>Category</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+          </tr>
+        </thead>
+        <tbody>
+            {{#each approvedVendor.vendors}}
+            <tr>
+              <td>{{inc @index}}</td>
+               <td>{{this.vendorNmae}}</td>
+              <td>{{this.email}}</td>
+               <td>{{this.phoneNumber}}</td>
+              </form>
+            </tr>
+          
+            {{/each}}
+   
+        </tbody>
+      </table>
 
-
-
-     
             </div>
          </div>
       </div>
@@ -537,10 +584,10 @@
          const btn = document.getElementById('category-input');
          document.getElementById("save-button").style.display="none";
 
-         function enableEdit() {
+         function enableEdit(id) {
            btn.removeAttribute('disabled');
-           document.getElementById("edit-button").style.display="none";
-          document.getElementById("save-button").style.display="inline-block";
+           document.getElementById("edit-button_"+id).style.display="none";
+          document.getElementById("save-button_"+id).style.display="inline-block";
          }
 
 
