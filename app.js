@@ -9,8 +9,9 @@ var vendorRouter = require('./routes/vendor');
 var adminRouter = require('./routes/admin');
 var session = require('express-session');
 const nocache = require("nocache");
+const passport = require('passport');
 var app = express();
-
+app.use(nocache());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -23,15 +24,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: "bro", resave:false,saveUninitialized:true, cookie: { maxAge: 700000 } }));
+app.use(session({ secret: "bro", resave:false,saveUninitialized:true, cookie: { maxAge: 7000000 } }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/vendor', vendorRouter);
 app.use('/admin', adminRouter);
-app.use(nocache());
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {

@@ -1,0 +1,139 @@
+  <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__logo">
+            <a href="./index.html"><img src="user/img/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__btn__widget">
+            <a href="#">Book Now <span class="arrow_right"></span></a>
+        </div>
+        <div class="offcanvas__widget">
+            <ul>
+                <li><span class="icon_pin_alt"></span> 96 Ernser Vista Suite 437, NY, US</li>
+                <li><span class="icon_phone"></span> (123) 456-78-910</li>
+            </ul>
+        </div>
+        <div class="offcanvas__language">
+            <img src="user/img/lan.png" alt="">
+            <span>English</span>
+            <i class="fa fa-angle-down"></i>
+            <ul>
+                <li>English</li>
+                <li>Bangla</li>
+            </ul>
+        </div>
+        <div class="offcanvas__auth">
+            <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">Register</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <ul class="header__top__widget">
+                            <li><span class="icon_pin_alt"></span> 96 Ernser Vista Suite 437, NY, US</li>
+                            <li><span class="icon_phone"></span> (123) 456-78-910</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="header__top__right">
+                            <div class="header__top__auth">
+                                {{#if name}}
+                                <ul>
+                                    <li><img src="{{pic}}"  height="50" alt="" style="border-radius:50% ; width: auto;"></li>
+                                    <li><a href="#">{{name}}</a></li>
+                                    <li><a href="/logout">Logout</a></li>
+                                    
+                                </ul>
+                                {{else}}
+                                <ul>
+                                    <li><a data-toggle="modal" data-target="#exampleModal">Login</a></li>
+                                    <li><a href="#">Register</a></li>
+                                </ul>
+                                {{/if}}
+
+                                
+                            </div>
+
+                               
+                           
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header__nav__option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="header__logo">
+                            <a href="./index.html" class="logo-text"><img src="/images/logo.png" alt="">Royal suites</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="header__nav">
+                            <nav class="header__menu">
+                                <ul class="menu__class">
+                                    <li class="active"><a href="/">Home</a></li>
+                                    <li><a href="/rooms">Rooms</a></li>
+                                    <li><a href="#">About us</a>
+                                        <ul class="dropdown">
+                                            <li><a href="./about.html">About Us</a></li>
+                                            <li><a href="./room-details.html">Room Details</a></li>
+                                            <li><a href="./blog-details.html">Blog Details</a></li>
+                                        </ul>
+                                    </li>
+                                   
+                                    <li><a href="./contact.html">Contact</a></li>
+                                </ul>
+                            </nav>
+                            <div class="header__nav__widget">
+                                <a href="#">Book Now <span class="arrow_right"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="canvas__open">
+                    <span class="fa fa-bars"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <div class="google-btn"><a href="/auth/google">
+  <div class="google-icon-wrapper">
+    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+  </div>
+  <p class="btn-text"><b>Sign in with google</b></p></a>
+</div>
+      </div>
+     
+    </div>
+  </div>
+</div>

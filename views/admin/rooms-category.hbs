@@ -1,0 +1,44 @@
+
+     
+    <h2 class="text-center my-5">All Rooms</h2>
+              <table class="display table" id="table_id">
+        <thead>
+          <tr>
+            <th>Sl No</th>
+            <th>Vendor</th>
+            <th>Room Name</th>
+            <th>Image</th>
+            <th>Block</th>
+          </tr>
+        </thead>
+        <tbody>
+        {{#each catogoryRoom}}
+            <tr>
+              <td>{{inc @index}}</td>
+             
+                 <td>{{this.name}}</td>
+                 <td>{{this.rooms.roomName}}</td>
+                
+                  <td><img src="/images/room-images/{{this.rooms.img.[0].filename}}" width="100"></td>
+                  
+               <td>
+               
+              <a href="/vendor/block-room/{{this._id}}" class="btn btn-danger">Block</a></td>
+              </form>
+            </tr>
+              <!-- Modal -->
+
+            {{/each}}
+   
+        </tbody>
+      </table>
+  
+      <script>
+
+         $(document).ready( function () {
+            $('#table_id').wrap('<div id="hide" style="display:none"/>');
+                  $('#hide').css( 'display', 'block' );
+            } );
+         var table = $('#table_id').DataTable();
+      </script>
+      
