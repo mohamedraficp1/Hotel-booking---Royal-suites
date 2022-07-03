@@ -111,8 +111,7 @@ router.post('/signup',(req,res)=>{
           console.log('otp failed redirect'+response);
         }
       })
-    
-  
+
 })
 
 

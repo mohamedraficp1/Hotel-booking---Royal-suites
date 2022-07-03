@@ -8,11 +8,11 @@
                         <h5>WELCOME ROYAL SUITES</h5>
                         <h2>Experience the greatest for you holidays.</h2>
                     </div>
-                    <form action="#" class="filter__form">
+                    <form action="/search-room" class="filter__form" method="post">
                         <div class="filter__form__item filter__form__item--search">
                             <p>Location</p>
                             <div class="filter__form__input">
-                                <input type="text" placeholder="Search Location">
+                                <input type="text" name="location" placeholder="Search Location">
                                 <span class="icon_search"></span>
                             </div>
                         </div>
@@ -20,7 +20,7 @@
                             <p>Check In</p>
                             <div class="filter__form__datepicker">
                                 <span class="icon_calendar"></span>
-                                <input type="text" class="datepicker_pop check__in">
+                                <input type="text" class="datepicker_pop check__in" name="checkIn">
                                 <i class="arrow_carrot-down"></i>
                             </div>
                         </div>
@@ -28,18 +28,29 @@
                             <p>Check Out</p>
                             <div class="filter__form__datepicker">
                                 <span class="icon_calendar"></span>
-                                <input type="text" class="datepicker_pop check__out">
+                                <input type="text" class="datepicker_pop check__out" name="checkOut">
                                 <i class="arrow_carrot-down"></i>
                             </div>
                         </div>
                         <div class="filter__form__item filter__form__item--select">
-                            <p>Person</p>
+                            <p>Rooms</p>
                             <div class="filter__form__select">
                                 <span class="icon_group"></span>
-                                <select>
-                                    <option value="">2 Adult, 1 Children</option>
-                                    <option value="">2 Adult</option>
-                                    <option value="">1 Adult</option>
+                                <select name="rooms">
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                        </div>
+                         <div class="filter__form__item filter__form__item--select">
+                            <p>Guest</p>
+                            <div class="filter__form__select">
+                                <span class="icon_group"></span>
+                                <select  name="guest">
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4 Adult</option>
                                 </select>
                             </div>
                         </div>

@@ -143,3 +143,9 @@ body
 .google-btn:active {
   background: #1669F2;
 }
+
+#form-filter {
+  box-shadow: 4px 6px 39px -1px rgba(0,0,0,0.75);
+-webkit-box-shadow: 4px 6px 39px -1px rgba(0,0,0,0.75);
+-moz-box-shadow: 4px 6px 39px -1px rgba(0,0,0,0.75);
+}

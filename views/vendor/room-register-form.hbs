@@ -2,11 +2,11 @@
                <!-- dashboard inner -->
                <h2 class="text-center mt-5 pt-5">Add a room</h2>
                <div class="w-75 mx-auto mt-5">
-               <form action="/vendor/add-room" enctype="multipart/form-data" method="post" >
+               <form action="/vendor/add-room" enctype="multipart/form-data" id="roomAdding" method="post" >
                   <div class="form-row">
                      <div class="form-group col-md-6">
                         <label for="inputEmail4">Room Name</label>
-                        <input type="text" class="form-control"  name="roomName" placeholder="Room Name">
+                        <input type="text" class="form-control" required name="roomName" placeholder="Room Name">
                      </div>
                      <div class="form-group col-md-6">
                         <label for="inputPassword4">ROom Size</label>
@@ -28,17 +28,17 @@
                      </div>
                      <div class="form-group col-md-6">
                         <label for="inputPassword4">Price</label>
-                        <input type="text" class="form-control"  name="price" placeholder="Price">
+                        <input type="text" class="form-control" required minlength="6" required name="price" placeholder="Price">
                      </div>
                   </div>
                    <div class="form-row">
                      <div class="form-group col-md-6">
                         <label for="inputEmail4"> Capacity</label>
-                        <input type="text" class="form-control"  name="capacity" placeholder="Capacity">
+                        <input type="text" class="form-control" required name="capacity" placeholder="Capacity">
                      </div>
                      <div class="form-group col-md-6">
                         <label for="inputPassword4">Bed Type</label>
-                        <input type="text" class="form-control"  name="bed" placeholder="Bed Type">
+                        <input type="text" class="form-control" required name="bed" placeholder="Bed Type">
                      </div>
                   </div>   
                   <div class="form-row">
@@ -68,14 +68,14 @@
                        </div>
                        <div class="col-md-6">
                         <label for="inputEmail4">Room Count</label><br>
-                         <input type="number" class="form-control"  name="roomCount" placeholder="Room Count">
+                         <input type="number" class="form-control" required  name="roomCount" placeholder="Room Count">
                        </div>
                   </div>
                    <div class="row">
                       
                        <div class="col-md-6">
                         <label for="inputEmail4">Room Description</label><br>
-                         <textarea name="description" rows="4" cols="50"></textarea>
+                         <textarea name="description" required rows="4" cols="50"></textarea>
                        </div>
                    </div>
                 
@@ -128,5 +128,16 @@ uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(
     });
 });
       </script>
+      <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/
+    jquery/3.3.1/jquery.min.js">
+    </script>
+   
+ <script>
+   $("#roomAdding").validate();
+   </script>
+
 
       

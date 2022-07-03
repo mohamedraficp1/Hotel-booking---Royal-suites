@@ -3,9 +3,12 @@ var router = express.Router();
 var Admin= require('../models/admin')
 const adminHelper= require("../helpers/adminHelper");
 const async = require('hbs/lib/async');
+const mailer = require('../config/email')
 var mongoose = require('mongoose')
 var Sms =require('../config/verify')
+const nodemailer = require('nodemailer');
 const client = require('twilio')('AC1771c44d73f01a6a895be8eeb56b103f', 'ff24b7bc240cf38d8d18c7efaf48d157');
+
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -15,9 +18,12 @@ router.get('/', function(req, res, next) {
     adminHelper.getCategory().then((data)=>{
       adminHelper.getVendors().then((vendorData)=>{
         adminHelper.getApprovedVendors().then((approvedvendor)=>{
-          res.render('admin/admin', { admin: true, data:data, vendorData:vendorData,approvedvendor:approvedvendor,catExist:catExist});
-          req.session.catExist= false
-        })
+          mailer.doEmail()
+            res.render('admin/admin', { admin: true, data:data, vendorData:vendorData,approvedvendor:approvedvendor,catExist:catExist});
+            req.session.catExist= false
+          })
+         
+       
       })
 
     })
@@ -126,6 +132,13 @@ router.get('/delete-category/:id',function(req, res) {
 router.get('/approve-vendor/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
   adminHelper.approveVendor(id).then((resp)=>{
+    res.redirect('/admin')
+  })
+})
+
+router.get('/reject-vendor/:id',function(req, res) {
+  let id= mongoose.Types.ObjectId(req.params.id)
+  adminHelper.rejectVendor(id).then((resp)=>{
     res.redirect('/admin')
   })
 })

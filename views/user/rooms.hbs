@@ -1,8 +1,8 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
-
-    <!-- Breadcrumb Begin -->
-    <div class="breadcrumb-option set-bg" data-setbg="user/img/breadcrumb-bg.jpg">
-        <div class="container">
+<div class="breadcrumb-option set-bg" data-setbg="user/img/breadcrumb-bg.jpg">
+        <div class="container mb-5">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
@@ -16,10 +16,131 @@
             </div>
         </div>
     </div>
+
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        <div class="col-md-3">
+            <form id="filter" method="post">
+                <div class="card">
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                                
+                                <h6 class="title">Category Types</h6>
+                            </a>
+                        </header>
+
+
+                        <div class="filter-content collapse show" id="collapse_2" style="">
+                            <div class="card-body">
+
+                                {{#each data.category}}
+
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="{{this.categoryName}}"
+                                        name="category">
+                                    <div class="custom-control-label">{{this.categoryName}}
+                                    </div>
+                                </label>
+                                {{/each}}
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="category" value="" hidden
+                                        checked>
+
+                                </label>
+
+                            </div>
+                        </div>
+                    </article>
+                     <!-- filter-group  .// -->
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true" class="">
+                               
+                                <h6 class="title">Vendors </h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_2" style="">
+                            <div class="card-body">
+
+                                {{#each vendorData}}
+
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="{{this.email}}"
+                                        name="vendor">
+                                    <div class="custom-control-label">{{this.email}}
+                                    </div>
+                                </label>
+                                {{/each}}
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="vendor" value="" hidden
+                                        checked>
+
+                                </label>
+
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- filter-group .// -->
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                               
+                                <h6 class="title">Price range </h6>
+                            </a>
+                        </header>
+
+                        <div class="filter-content collapse show" id="collapse_2" style="">
+                            <div class="card-body">
+
+
+
+                                <label class="custom-control custom-checkbox">
+                                    <input type="radio" class="custom-control-input" value="1000" name="Prize">
+                                    <div class="custom-control-label">Under 1000
+                                    </div>
+                                </label>
+                                <label class="custom-control custom-checkbox">
+                                    <input type="radio" class="custom-control-input" value="2000" name="Prize">
+                                    <div class="custom-control-label">Under 2000
+                                    </div>
+                                </label>
+                                <label class="custom-control custom-checkbox">
+                                    <input type="radio" class="custom-control-input" value="3000" name="Prize">
+                                    <div class="custom-control-label">Under 3000
+                                    </div>
+                                </label>
+                                
+                                <label class="custom-control custom-checkbox">
+                                    <input type="radio" class="custom-control-input" value="150000" name="Prize">
+                                    <div class="custom-control-label">under 150000
+                                    </div>
+                                </label>
+                                <label class="custom-control  custom-checkbox">
+                                    <input type="radio" class="custom-control-input" name="Prize" value="100000" >
+
+                                </label>
+
+
+                            </div>
+                        </div>
+
+                    </article>
+
+
+           
+        </div>
+        </form>
+        </div>
+     <div id="roomsDetails" class="col-md-9">
+               <!-- Breadcrumb Begin -->
+    
     <!-- Breadcrumb End -->
 
     <!-- Rooms Section Begin -->
-    <section class="rooms spad">
+   
         <div class="container">
             
                 {{#each response}}
@@ -58,7 +179,40 @@
                 </div>
             </div>
         </div>
-    </section>
+        
+   
     <!-- Rooms Section End -->
 
+        </div>
+
+
+
+    </main>
+    </div>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/f6c14f9db9.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="/javascripts/addToCart.js"></script>
+
+<script>
+     $('input[name=category]').change(function() {
+   
+    $.ajax({
+        url: '/search-filter',  
+        method: "post",
+        data: $('#filter').serialize(),
+        success: (isResult) => {
+            if (isResult) {
+                $('#roomsDetails').load(location.href + " #roomsDetails");
+            }
+        }
+    })
+
+  });
+</script>
+
+
+
+ 
   

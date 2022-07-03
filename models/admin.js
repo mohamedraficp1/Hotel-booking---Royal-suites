@@ -40,7 +40,19 @@ const adminSchema = new mongoose.Schema({
         isDeleted: Boolean,
         createdAt: Date,
        
-    }]
+    }],
+
+    booking : [
+        {
+            roomId: String,
+            vendorId: String,
+            checkInDate : Date,
+            checkOutDate: Date,
+            noOfRoom: Number,
+            totalAmount: Number,
+            status: String
+        }
+    ]
 })
 
 module.exports= mongoose.model("Admin",adminSchema)

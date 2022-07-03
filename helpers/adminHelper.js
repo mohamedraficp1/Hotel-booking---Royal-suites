@@ -6,7 +6,6 @@ const nodemailer = require('nodemailer')
 module.exports={
     doLogin: (userData)=>{
         return new Promise(async(resolve,reject)=>{
-           
           let response={}
           let admindetail=await Admin.findOne({email: userData.email, role: "admin"}) 
           if(admindetail){
@@ -102,8 +101,12 @@ module.exports={
     uniqueCategory :(categoryData)=> {
         
         return new Promise (async(resolve, reject)=> {
-            let response={}
-            let uniqueCategory= await Admin.aggregate([{$match: {role: "admin"}},{ $unwind : "$category" },{ $match : { 'category.categoryName' : categoryData.category } }])
+            let response={exist:false}
+            let uniqueCategory= await Admin.aggregate([
+                {$match: {role: "admin"}},
+                { $unwind : "$category" },
+                { $match : { 'category.categoryName' : categoryData.category } }
+            ])
             console.log(uniqueCategory);
             let uniqueCategoryLength = uniqueCategory.length
             console.log(uniqueCategoryLength)
@@ -112,10 +115,10 @@ module.exports={
                 resolve(response)
             }
 
-            else{
-                response.exist=false;
+            // else{
+                // response.exist=false;
                 resolve(response)  
-            }
+            // }
         })
     },
 
@@ -163,6 +166,13 @@ module.exports={
     approveVendor:(id)=>{
         return new Promise(async(resolve,reject)=>{ 
             let approvevendor = await Admin.updateOne({'_id': id},{$set : {'isVerified': "approved"}})
+            resolve(approvevendor)
+        })
+    },
+
+    rejectVendor:(id)=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let approvevendor = await Admin.updateOne({'_id': id},{$set : {'isVerified': "rejected"}})
             resolve(approvevendor)
         })
     },

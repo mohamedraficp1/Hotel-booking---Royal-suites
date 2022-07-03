@@ -58,6 +58,12 @@
                                     <li><a href="/logout">Logout</a></li>
                                     
                                 </ul>
+                                {{else if profileName}}
+                                 <ul>
+                                    <li><a href="#">{{profileName}}</a></li>
+                                    <li><a href="/logout">Logout</a></li>
+                                    
+                                </ul>
                                 {{else}}
                                 <ul>
                                     <li><a data-toggle="modal" data-target="#exampleModal">Login</a></li>

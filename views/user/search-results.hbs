@@ -1,0 +1,121 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+<div class="breadcrumb-option set-bg" data-setbg="user/img/breadcrumb-bg.jpg">
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h1>Our Room</h1>
+                        <div class="breadcrumb__links">
+                            <a href="./index.html">Home</a>
+                            <span>Rooms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+    <div class="row mt-5 pt-5">
+          <div id="roomsDetails" class="col">
+               <!-- Breadcrumb Begin -->
+    
+    <!-- Breadcrumb End -->
+     <form action="/search-room" id="form-filter" class="filter__form mb-5 pb-5" method="post">
+                        <div class="filter__form__item filter__form__item--search">
+                            <p>Location</p>
+                            <div class="filter__form__input">
+                                <input type="text" name="location" placeholder="Search Location" value="{{content.location}}">
+                                <span class="icon_search"></span>
+                            </div>
+                        </div>
+                        <div class="filter__form__item">
+                            <p>Check In</p>
+                            <div class="filter__form__datepicker">
+                                <span class="icon_calendar"></span>
+                                <input type="text" class="datepicker_pop check__in" name="checkIn" value="{{content.checkIn}}">
+                                <i class="arrow_carrot-down"></i>
+                            </div>
+                        </div>
+                        <div class="filter__form__item">
+                            <p>Check Out</p>
+                            <div class="filter__form__datepicker">
+                                <span class="icon_calendar"></span>
+                                <input type="text" class="datepicker_pop check__out" name="checkOut"  value="{{content.checkOut}}">
+                                <i class="arrow_carrot-down"></i>
+                            </div>
+                        </div>
+                        <div class="filter__form__item filter__form__item--select">
+                            <p>Rooms</p>
+                            <div class="filter__form__select">
+                                <span class="icon_group"></span>
+                                <select name="rooms" value="{{content.rooms}}">
+                                    <option value="two">2</option>
+                                    <option value="three">3</option>
+                                    <option value="four">4</option>
+                                </select>
+                            </div>
+                        </div>
+                         <div class="filter__form__item filter__form__item--select">
+                            <p>Guest</p>
+                            <div class="filter__form__select">
+                                <span class="icon_group"></span>   
+                                <select  name="guest"  value="{{content.guest}}">
+                                    <option value="two">2</option>
+                                    <option value="three">3</option>
+                                    <option value="four">4 Adult</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit">BOOK NOW</button>
+                    </form>
+
+    <!-- Rooms Section Begin -->
+   
+        <div class="container mt-5">
+            
+                {{#each datas}}
+                <div class="row">
+                <div class="col-lg-6 p-0 order-lg-2 order-md-2 col-md-6">
+                    <div class="room__pic__slider owl-carousel">
+                        {{#each this.rooms.img}}
+                        <div class="room__pic__item set-bg" data-setbg="/images/room-images/{{this.filename}}"></div>
+                        {{/each}}
+                    </div>
+                </div>
+                <div class="col-lg-6 p-0 order-lg-1 order-md-1 col-md-6">
+                    <div class="room__text">
+                        <h3>{{this.rooms.roomName}}</h3>
+                        <h2><sup>₹</sup>{{this.rooms.price}}<span>/day</span></h2>
+                        <ul>
+                            <li><span>Size:</span>{{this.rooms.roomSize}} ft</li>
+                            <li><span>Capacity:</span>Max persion {{this.rooms.capacity}}</li>
+                            <li><span>Bed:</span>{{this.rooms.bed}}</li>
+                            <li><span>Services:</span>{{this.rooms.amenities.wifi}}, {{this.rooms.amenities.tv}}, {{this.rooms.amenities.parking}}, {{this.rooms.amenities.power}}...</li>
+                           
+                        </ul>
+                        <a href="/rooms/{{this.rooms._id}}">View Details</a>
+                    </div>
+                </div>
+                 </div>
+                {{/each}}
+           
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="pagination__number">
+                        <a href="#">1</a>
+                        <a href="#">2</a>
+                        <a href="#">Next <span class="arrow_right"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+   
+    <!-- Rooms Section End -->
+
+        </div>
+        </div>
+        </div>

@@ -41,7 +41,13 @@
                         </div>
                         <div class="room__details__title">
                             <h2>{{data.rooms.roomName}}</h2>
-                            <a href="#" class="primary-btn">Booking Now</a>
+                            <form action="/book-room" method="post">
+                                <input type="text" name="roomID"  value="{{data.rooms._id}}" hidden>
+                                 <input type="text" name="vendorId"  value="{{data._id}}" hidden>
+                                 <button class="primary-btn" type="submit">BOOK NOW</button>
+                
+                            </form>
+                            
                         </div>
                         <div class="room__details__desc">
                             <h2>Description:</h2>
@@ -77,6 +83,7 @@
                                              {{/if}}
                                            
                                         </div>
+                                        
                                         <div class="col-lg-6">
                                              {{#if data.rooms.amenities.parking}}
                                              <div class="room__details__more__facilities__item">
