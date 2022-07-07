@@ -49,6 +49,7 @@ router.post('/login', function(req, res, next) {
       req.session.vendorloggedIn = true;
       req.session.name = response.vendor
       req.session.id=response.id
+      req.session.vendorEmail= response.email
       console.log(req.session)
       res.redirect('/vendor')
       
@@ -149,6 +150,16 @@ router.get('/delete-room/:id',function(req,res){
     vendorHelper.deleteRoom(id).then((response)=>{
         res.redirect('/vendor')
     })
+})
+
+router.get('/booking-details',(req,res)=>{
+  vendorHelper.getBookingDetails(req.session.vendorEmail).then((data)=>{
+    vendorHelper.getBookingCancelDetails(req.session.vendorEmail).then((cancelledData)=>{
+      res.render('vendor/booking-details', {vendor: true,name: req.session.name,bookingData:data,cancelledData:cancelledData})
+    })
+    
+  })
+  
 })
 
 module.exports = router;

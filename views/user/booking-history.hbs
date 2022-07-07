@@ -1,0 +1,73 @@
+<h2 class="mt-5 text-center">Upcoming Bookings</h2>
+
+<div class="container my-5">
+    <div class="row">
+        <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Sl No</th>
+      <th scope="col">Room Name</th>
+      <th scope="col">Hotel Name</th>
+      <th scope="col">checkIn</th>
+      <th scope="col">checkOut</th>
+      <th scope="col">Room Count</th>
+      <th scope="col">Status</th>
+       <th scope="col">Cancel </th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each data}}
+    <tr>
+       <td>{{inc @index}}</td>
+      <td>{{this.booking.roomDetails.rooms.roomName}}</td>
+      <td>{{this.booking.roomDetails.name}}</td>
+     <td>{{this.booking.checkInDate}}</td>
+      <td>{{this.booking.checkOutDate}}</td>
+      <td>{{this.booking.noOfRoom}}</td>
+      <td>{{this.booking.status}}</td>
+      <td> <a href="/cancel-order/{{this.booking._id}}" class="btn btn-danger">Cancel</a></td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+
+    </div>
+</div>
+
+<h2 class="mt-5 text-center">Cancelled Bookings</h2>
+
+<div class="container my-5">
+    <div class="row">
+        <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Sl No</th>
+      <th scope="col">Room Name</th>
+      <th scope="col">Hotel Name</th>
+      <th scope="col">checkIn</th>
+      <th scope="col">checkOut</th>
+      <th scope="col">Room Count</th>
+      <th scope="col">Status</th>
+       
+    </tr>
+  </thead>
+  <tbody>
+      {{#each cancelledData}}
+    <tr>
+       <td>{{inc @index}}</td>
+      <td>{{this.booking.roomDetails.rooms.roomName}}</td>
+      <td>{{this.booking.roomDetails.name}}</td>
+     <td>{{this.booking.checkInDate}}</td>
+      <td>{{this.booking.checkOutDate}}</td>
+      <td>{{this.booking.noOfRoom}}</td>
+      <td>{{this.booking.status}}</td>
+      
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+
+    </div>
+</div>

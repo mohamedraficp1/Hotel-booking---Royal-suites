@@ -33,6 +33,7 @@ module.exports={
                       response.status=true;
                       response.vendor= vendorDetail.name
                       response.id=vendorDetail._id
+                      response.email= vendorDetail.email
                       console.log(vendorDetail)
                       resolve(response)
                   }else{
@@ -113,6 +114,38 @@ getRoom : (vendorName)=>{
             let deleteRoom = await Admin.updateOne({'rooms._id': id},{$set : {'rooms.$.isDeleted': true}})
             resolve(deleteRoom)
         })
+    },
+
+    getBookingDetails: (emailId)=>{
+        return new Promise (async(resolve,reject)=>{
+        try{
+            let bookingDetail =  await Admin.aggregate( [
+                { $match : { role: "user"}},{ $unwind : "$booking"  }
+                ,{ $match : { 'booking.roomDetails.email':emailId ,'booking.status': "pending" }}] )
+            console.log(bookingDetail)
+            resolve(bookingDetail)
+        }
+        catch(e){
+            console.log(e)
+        }
+  
+    })
+    },
+
+    getBookingCancelDetails: (emailId)=>{
+        return new Promise (async(resolve,reject)=>{
+            try{
+                let bookingCancelDetail =  await Admin.aggregate( [{ $match : { role: "user"}},{ $unwind : "$booking"  },{ $match : { 'booking.roomDetails.email':emailId ,'booking.status': "cancel" }}] )
+                console.log(bookingCancelDetail)
+                console.log('bookingcancxel')
+                    resolve(bookingCancelDetail)
+            }
+
+            catch(e){
+                console.log(e)
+            }
+
+    })
     },
 
 }

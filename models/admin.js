@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const adminSchema = new mongoose.Schema({
     name:String,
     email: String,
+    location: String,
     role: String,
     phoneNumber: Number,
     password: String,
@@ -44,8 +45,7 @@ const adminSchema = new mongoose.Schema({
 
     booking : [
         {
-            roomId: String,
-            vendorId: String,
+            roomDetails: Object,
             checkInDate : Date,
             checkOutDate: Date,
             noOfRoom: Number,
