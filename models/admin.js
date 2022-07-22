@@ -4,10 +4,22 @@ const adminSchema = new mongoose.Schema({
     name:String,
     email: String,
     location: String,
+    hotelName: String,
     role: String,
     phoneNumber: Number,
     password: String,
+    address:String,
     isVerified: String,
+    profileImage:Array,
+    messages:[Object],
+    banner:[
+        {
+            title: String,
+            subTitle: String,
+            image:Array,
+            bannerIsDeleted: Boolean
+        }
+    ],
     category:[
         {
         categoryName: String,
@@ -29,6 +41,7 @@ const adminSchema = new mongoose.Schema({
         price:Number,
         capacity: String,
         roomCount: Number,
+        remainingRooms:Number,
         bed: String,
         rating: Number,
         reviews:[{
@@ -36,7 +49,7 @@ const adminSchema = new mongoose.Schema({
             date: Date,
             content: String,
         }],
-        
+        wishlist:Array,
         img: Array,
         isDeleted: Boolean,
         createdAt: Date,
@@ -48,11 +61,19 @@ const adminSchema = new mongoose.Schema({
             roomDetails: Object,
             checkInDate : Date,
             checkOutDate: Date,
+            bookingDate: String,
+            bokingStatus: String,
             noOfRoom: Number,
             totalAmount: Number,
-            status: String
+            payementMetod: String,
+            status: String,
+            isActive: Boolean,
+            checkedOut: Boolean,
+            cancelled:Boolean,
+            canCancel:Boolean
         }
-    ]
+    ],
+    searchResults:Array
 })
 
 module.exports= mongoose.model("Admin",adminSchema)

@@ -1,50 +1,31 @@
+require('dotenv').config()
+const nodemailer = require("nodemailer");
 
- 
+module.exports = {
+  doEmail: (mail, content) => {
+    const transporter = nodemailer.createTransport({
+      service: "hotmail",
+      auth: {
+        user: process.env.NODE_MAILER_USERNAMRE,
+        pass: process.env.NODE_MAILER_PASSWORD,
+      },
+    });
+    const options = {
+      from: "royalsuites01@outlook.com",
+      to: mail,
+      subject: "Room Booking",
+      text: "!!!!Congratulations!!!!...Sir, We are happy to inform that Your Booking has been"+ content+ ", Thank You !!!",
+    };
 
-const nodemailer=require('nodemailer')
-
-
-
-
-
-const transporter=nodemailer.createTransport({
-
-    service: "hotmail",
-    auth :{
-        user:"royalsuites01@outlook.com",
-        pass: "Royal@123"
-        
-    }
-});
-
-const options={
-
-    from: "royalsuites01@outlook.com",
-    to: "mohamedraficp@gmail.com",
-    subject:"Hospital Rgistratoin",
-    text:"!!!!Congratulations!!!!...Sir, We are happy to inform that Your hospital registration is aproved, Please contact our team immediately, Thank You !!!"
-}
-
-module.exports ={
-
-
-doEmail:()=>{
-
-
-transporter.sendMail(options, function(err,info){
-
-    if(err){
-        console.log(err)
-        return
-    }
-    console.log("Sent :"+ info.response);
-})
-
-},
-
-
-
-}
+    transporter.sendMail(options, function (err, info) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log("Sent :" + info.response);
+    });
+  },
+};
 
 // const nodemailer = require('nodemailer');
 // const mailTransporter = nodemailer.createTransport({
@@ -55,7 +36,6 @@ transporter.sendMail(options, function(err,info){
 //     }
 // });
 
-
 // let mailDetails =  {
 // from: 'quickdocbooking@outlook.com',
 // to: 'mohamedraficp@gmail.com',
@@ -63,14 +43,9 @@ transporter.sendMail(options, function(err,info){
 // text: 'This'
 // };
 
- 
-
-
 // module.exports = {
 //     doEmail:(emailData)=>{
-        
-            
-           
+
 //         // //testing success
 //         mailTransporter.verify((error,success)=>{
 //                 if(error){
@@ -79,18 +54,18 @@ transporter.sendMail(options, function(err,info){
 //                     console.log('outlook connection established');
 //                 }
 //             })
-         
+
 //         mailTransporter.sendMail(mailDetails, function(err, data) {
 //             console.log('dedded');
 //             if(err) {
 //                 console.log(err);
-               
+
 //             } else {
 //                 console.log('Email sent successfully');
-               
+
 //             }
 //         });
-    
+
 //     }
-    
+
 // }

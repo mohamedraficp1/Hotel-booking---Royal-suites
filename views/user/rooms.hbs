@@ -19,16 +19,15 @@
 
 
 <div class="container">
-    <div class="row mt-5 pt-5">
+    <div class="row my-5 py-5">
         <div class="col-md-3">
-            <form id="filter" method="post">
+            <form id="filter"  class="filter-form">
                 <div class="card">
                     <article class="filter-group">
                         <header class="card-header">
-                            <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-                                
+                      
                                 <h6 class="title">Category Types</h6>
-                            </a>
+                            
                         </header>
 
 
@@ -51,25 +50,26 @@
                                 </label>
 
                             </div>
+                            
                         </div>
                     </article>
                      <!-- filter-group  .// -->
                     <article class="filter-group">
                         <header class="card-header">
-                            <a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true" class="">
                                
                                 <h6 class="title">Aminities </h6>
-                            </a>
+                          
                         </header>
                         <div class="filter-content collapse show" id="collapse_2" style="">
                             <div class="card-body">
-
-                                 <label class="custom-control custom-checkbox">
+                                <label class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" value="wifi"
                                         name="wifi">
                                     <div class="custom-control-label">Wifi
                                     </div>
                                 </label>
+
+                    
                                  <label class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" value="AC"
                                         name="ac">
@@ -102,10 +102,9 @@
                     <!-- filter-group .// -->
                     {{!-- <article class="filter-group">
                         <header class="card-header">
-                            <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
                                
                                 <h6 class="title">Price range </h6>
-                            </a>
+                          
                         </header>
 
                         <div class="filter-content collapse show" id="collapse_2" style="">
@@ -145,7 +144,29 @@
 
                     </article> --}}
 
+               {{!-- <article class="filter-group">
+                        <header class="card-header">
+                               
+                                <h6 class="title">Sort </h6>
+                          
+                        </header>
 
+                        <div class="filter-content collapse show" id="collapse_2" style="">
+                            <div class="card-body">
+                              <label class="custom-control custom-checkbox">
+                                    <input type="radio" class="custom-control-input" value="hl" name="price">
+                                    <div class="custom-control-label">Sort from high to low
+                                    </div>
+                                </label>
+                                <label class="custom-control custom-checkbox">
+                                    <input type="radio" class="custom-control-input" value="lh" name="price">
+                                    <div class="custom-control-label">Sort from low to high
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                    </article> --}}
            
         </div>
         </form>
@@ -162,33 +183,35 @@
         <div class="container">
             
                 {{#each roomfilterData}}
-                <div class="row">
-                <div class="col-lg-6 p-0 order-lg-2 order-md-2 col-md-6">
+                <div class="row inner-section">
+                    
+                              <div class="col-lg-6 p-0 order-lg-2 order-md-2 col-md-6">
                     {{!-- <div class="room__pic__slider owl-carousel"> --}}
                         {{!-- {{#each this.rooms.img}}
                         {{!-- <div class="room__pic__item set-bg" data-setbg="/images/room-images/{{this.filename}}" style="background-image: url("/images/room-images//{{this.filename}}");"></div> --}}
                         {{!-- {{/each}} --}} 
-                        <img src="/images/room-images/{{this.rooms.img.[0].filename}}">
+                        <img src="/images/room-images/{{this.searchResults.rooms.img.[0].filename}}">
                     {{!-- </div> --}}
                 </div>
                 <div class="col-lg-6 p-0 order-lg-1 order-md-1 col-md-6">
-                    <div class="room__text">
-                        <h3>{{this.rooms.roomName}}</h3>
-                        <h2><sup>₹</sup>{{this.rooms.price}}<span>/day</span></h2>
+                    <div class="room__text filtered-rooms">
+                        <h3 style="margin-bottom: 8px">{{this.searchResults.rooms.roomName}}</h3>
+                        <h2><sup>₹</sup>{{this.searchResults.rooms.price}}<span>/day</span></h2>
                         <ul>
-                            <li><span>Size:</span>{{this.rooms.roomSize}} ft</li>
-                            <li><span>Capacity:</span>Max persion {{this.rooms.capacity}}</li>
-                            <li><span>Bed:</span>{{this.rooms.bed}}</li>
-                            <li><span>Services:</span>{{this.rooms.amenities.wifi}}, {{this.rooms.amenities.tv}}, {{this.rooms.amenities.parking}}, {{this.rooms.amenities.power}}...</li>
+                            <li><span>Size:</span>{{this.searchResults.rooms.roomSize}} ft</li>
+                            <li><span>Capacity:</span>Max persion {{this.searchResults.rooms.capacity}}</li>
+                            <li><span>Bed:</span>{{this.searchResults.rooms.bed}}</li>
+                            <li><span>Services:</span>{{this.searchResults.rooms.amenities.wifi}}, {{this.searchResults.rooms.amenities.tv}}, {{this.rooms.amenities.parking}}, {{this.rooms.amenities.power}}...</li>
                            
                         </ul>
-                        <a href="/rooms/{{this.rooms._id}}">View Details</a>
-                    </div>
+                        <a href="/rooms/{{this.searchResults.rooms._id}}">View Details</a>
+                    </div>                                                                                                      
                 </div>
+                    
                  </div>
                 {{/each}}
            
-            <div class="row">
+            <div class="row mt-5">
                 <div class="col-lg-12">
                     <div class="pagination__number">
                         <a href="#">1</a>
@@ -209,13 +232,84 @@
     </main>
     </div>
 </div>
+<style>
+    .filter-form{
+        box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.45);
+        -webkit-box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.45);
+        -moz-box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.45);
+    }
+
+    .filter-form h6  {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 24px;
+        margin: 4px auto 16px;
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 0;
+    }
+
+    .filter-form .card-header {
+        background-color: #000;
+    }
+
+    .filtered-rooms h3,
+    .filtered-rooms h2,
+    .filtered-rooms ul li span,
+    .filtered-rooms ul li {
+        font-family: 'Jost', sans-serif;
+    }
+
+    .filtered-rooms ul li {
+        line-height: 32px;
+    }
+
+    .inner-section {
+        box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.45);
+        -webkit-box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.45);
+        -moz-box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.45);
+        padding: 44px;
+    }
+
+    .inner-section .room__text {
+        margin-bottom: 0px;
+    }
+
+   .inner-section a {
+        background: #000;
+        border-radius: 8px;
+        color: #fff;
+        padding: 9px 22px;
+    }
+
+    .inner-section ul {
+        margin-bottom: 20px;
+    } 
+    
+    .inner-section a:hover {
+        text-decoration: none;
+    }
+
+    .room__text a:before {
+        width: 0;
+    }
+
+    input[type=checkbox]:checked {
+        background-color: #a77e2d !important;
+        color: #ffffff !important;
+    }
+    input[type='checkbox']:after {
+        box-shadow: none !important;
+    }
+</style>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://kit.fontawesome.com/f6c14f9db9.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="/javascripts/addToCart.js"></script>
 
 <script>
-     $('input[name=category]').change(function() {
+
+  $('input[name=category]').change(function() {
    
     $.ajax({
         url: '/search-filter',  
@@ -273,6 +367,23 @@
     })
 
   });
+
+    $('input[name=price]').change(function() {
+   
+    $.ajax({
+        url: '/search-filter',  
+        method: "post",
+        data: $('#filter').serialize(),
+        success: (isResult) => {
+            if (isResult) {
+                $('#products').load(location.href + " #products");
+            }
+       
+        }
+    })
+
+  });
+
 </script>
 
 

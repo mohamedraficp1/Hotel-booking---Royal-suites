@@ -1,3 +1,71 @@
+
+
+<h2 class="mt-5 text-center">Active Bookings</h2>
+
+<div class="container my-5">
+    <div class="row">
+        <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Sl No</th>
+      <th scope="col">Name</th>
+     <th scope="col">Room Name</th>
+      <th scope="col">checkIn</th>
+      {{!-- <th scope="col">checkOut</th> --}}
+      <th scope="col">Room Count</th>
+      <th scope="col">Payement Method</th>
+      <th scope="col">Status</th>
+      {{!-- <th scope="col">Change Status</th> --}}
+    </tr>
+  </thead>
+  <tbody>
+      {{#each todaysBooking}}c
+    <tr>
+       <td>{{inc @index}}</td>
+      <td>{{this.name}}</td>
+      <td>{{this.booking.roomDetails.rooms.roomName}}</td>
+     <td><span id="in{{this.booking._id}}"></span></td>
+      {{!-- <td><span id="out{{this.booking._id}}"></span></td> --}}
+      <td>{{this.booking.noOfRoom}}</td>
+      <td>{{this.booking.payementMetod}}</td>
+      <td>{{this.booking.status}}</td>
+      {{!-- <td><a  href="/vendor/change-status/{{this._id}}" class="btn btn-success d-inline-block">Un Block</a> --}}
+    </tr>
+
+     <script>
+        function strDate(data){
+        date = new Date(data);
+        year = date.getFullYear();
+        month = date.getMonth()+1;
+        dt = date.getDate();
+
+        if (dt < 10) {
+          dt = '0' + dt;
+        }
+        if (month < 10) {
+          month = '0' + month;
+        }
+
+        return(year+'-' + month + '-'+dt);
+   
+        }
+
+         indate = strDate('{{this.booking.checkInDate}}')
+         outdate = strDate('{{this.booking.checkOutDate}}')
+         document.getElementById('in{{this.booking._id}}').innerText
+         = indate
+          document.getElementById('out{{this.booking._id}}').innerText= outdate
+        console.log(indate)
+
+      </script>
+    {{/each}}
+  </tbody>
+</table>
+
+
+    </div>
+</div>
+
 <h2 class="mt-5 text-center">Upcoming Bookings</h2>
 
 <div class="container my-5">
@@ -6,13 +74,13 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">Sl No</th>
-      <th scope="col">Room Name</th>
-      <th scope="col">Hotel Name</th>
+      <th scope="col">Name</th>
+     <th scope="col">Room Name</th>
       <th scope="col">checkIn</th>
       <th scope="col">checkOut</th>
       <th scope="col">Room Count</th>
+      <th scope="col">Payement Method</th>
       <th scope="col">Status</th>
-      
     </tr>
   </thead>
   <tbody>
@@ -20,12 +88,41 @@
     <tr>
        <td>{{inc @index}}</td>
       <td>{{this.name}}</td>
-      <td>{{this.email}}</td>
-     <td>{{this.booking.checkInDate}}</td>
-      <td>{{this.booking.checkOutDate}}</td>
+      <td>{{this.booking.roomDetails.rooms.roomName}}</td>
+     <td><span id="in{{this.booking._id}}"></span></td>
+      <td><span id="out{{this.booking._id}}"></span></td>
       <td>{{this.booking.noOfRoom}}</td>
+      <td>{{this.booking.payementMetod}}</td>
       <td>{{this.booking.status}}</td>
     </tr>
+
+     <script>
+        function strDate(data){
+        date = new Date(data);
+        year = date.getFullYear();
+        month = date.getMonth()+1;
+        dt = date.getDate();
+
+        if (dt < 10) {
+          dt = '0' + dt;
+        }
+        if (month < 10) {
+          month = '0' + month;
+        }
+
+        return(year+'-' + month + '-'+dt);
+        
+        
+        }
+
+         indate = strDate('{{this.booking.checkInDate}}')
+         outdate = strDate('{{this.booking.checkOutDate}}')
+         document.getElementById('in{{this.booking._id}}').innerText
+         = indate
+          document.getElementById('out{{this.booking._id}}').innerText= outdate
+        console.log(indate)
+
+      </script>
     {{/each}}
   </tbody>
 </table>
@@ -70,3 +167,28 @@
 
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+<script>
+var xyValues = [ {{#each sales}} {x:{{this._id}}, y:7},{{/each}}];
+console.log(sales)
+
+new Chart("myChart", {
+  type: "scatter",
+  data: {
+    datasets: [{
+      pointRadius: 4,
+      pointBackgroundColor: "rgb(0,0,255)",
+      data: xyValues                                                                                                                                                                                                                                                                                  
+    }]
+  },
+  options: {
+    legend: {display: false},
+    scales: {
+      xAxes: [{ticks: {min: 40, max:160}}],
+      yAxes: [{ticks: {min: 6, max:16}}],
+    }
+  }
+});
+</script>

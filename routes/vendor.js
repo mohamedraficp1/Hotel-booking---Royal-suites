@@ -14,9 +14,7 @@ router.get('/', function(req, res, next) {
   if(req.session.vendorloggedIn){
     let name = req.session.name
     vendorHelper.getRoom(req.session.name).then((response)=>{
-      
       res.render('vendor/vendor', { vendor: true , name: name, roomData: response });
-      
 
   })
   }
@@ -98,6 +96,19 @@ router.post('/add-room', upload.array('multi-files'), (req, res) => {
 });
 
 
+router.post('/edit-room', upload.array('multi-files'), (req, res) => {
+  let name = req.session.name
+  let images = req.files
+  vendorHelper.editRoom(req.body, name ).then ((response)=>{
+    if (response){
+      res.redirect('/vendor')
+    }
+    else {
+      res.redirect('/vendor/add-room')
+    }
+})
+});
+
 // post method signup
 router.post('/signup',(req,res)=>{
   req.session.sellerData = req.body
@@ -155,11 +166,96 @@ router.get('/delete-room/:id',function(req,res){
 router.get('/booking-details',(req,res)=>{
   vendorHelper.getBookingDetails(req.session.vendorEmail).then((data)=>{
     vendorHelper.getBookingCancelDetails(req.session.vendorEmail).then((cancelledData)=>{
-      res.render('vendor/booking-details', {vendor: true,name: req.session.name,bookingData:data,cancelledData:cancelledData})
+      vendorHelper.getReservations(req.session.vendorEmail).then((responses)=>{
+        vendorHelper.getDailySales(req.session.vendorEmail).then((sales)=>{
+          vendorHelper.getTodaysBookings(req.session.vendorEmail).then((todaysBooking)=>{
+        console.log(req.session.vendorEmail)
+        console.log('tttt');
+        console.log(sales);
+        console.log(responses);
+        res.render('vendor/booking-details', {vendor: true,name: req.session.name,bookingData:responses,todaysBooking,cancelledData:cancelledData, sales:sales})
+      })
+  })
+})
     })
-    
   })
   
+})
+
+router.get('/sales',(req,res)=>{
+  try{
+    vendorHelper.getDailySales(req.session.vendorEmail).then((sales)=>{
+      vendorHelper.getTotalSales(req.session.vendorEmail).then((totalSale)=>{
+        vendorHelper.getTodaysBookings(req.session.vendorEmail).then((todaysBooking)=>{
+          vendorHelper.getTodaysSalesAmount(req.session.vendorEmail).then((totayBookingamount)=>{
+            vendorHelper.getTodaysSalesCount(req.session.vendorEmail).then((todaysBookingcount)=>{
+              vendorHelper.getRoomsSalesAmount(req.session.vendorEmail).then((roomSale)=>{
+          totalActiveBookings = todaysBooking.length
+          totalSaleAmount= totalSale[0].total
+          todaysSale = totayBookingamount[0].total
+          todaySaleCount= todaysBookingcount.length
+          const reformattedArrayDate =sales.map(x => (x._id).slice(-2));
+          const reformattedArrayTotal =sales.map(x => (x.total));
+          const reFormattedArrayRoomName = roomSale.map(x  => String(x._id));
+          const reFormattedArrayRoomTotal = roomSale.map(x  => (x.total));
+      res.render('vendor/sales', {vendor: true,name: req.session.name,sales:sales, totalSaleAmount, totalActiveBookings
+      ,todaysSale,todaySaleCount,reformattedArrayDate,reformattedArrayTotal,reFormattedArrayRoomTotal,reFormattedArrayRoomName})
+      console.log(sales);
+      console.log(totalSaleAmount);
+      console.log("ytyty") 
+    
+    console.log(reFormattedArrayRoomName)
+    console.log(reFormattedArrayRoomTotal)
+    })
+  })
+  })
+})
+      })
+})
+  }
+  catch(e) {
+      console.log(e)
+  }
+
+})
+
+router.get('/sales-details-report/:id', async(req,res)=>{
+  try{
+    date= req.params.id
+    const sales= await vendorHelper.getSaleOnAday(req.session.vendorEmail, date)
+    res.render('vendor/booking-on-day', {sales,vendor:true,name: req.session.name,}) 
+
+  }
+  catch(e) {
+      console.log(e)
+  }
+
+})
+
+router.get('/edit-room/:id',async (req,res)=>{
+  try{
+    id= mongoose.Types.ObjectId(req.params.id)
+    const categories=adminHelper.getCategory()
+      const roomupdate = await vendorHelper.roomUpdate({$match:{role:"vendor"}},{ $unwind : "$rooms"},{$match:{'rooms._id': id}})
+      roomupdateDetails = roomupdate[0]
+      res.render('vendor/edit-room',{vendor:true,name: req.session.name, categories,roomupdateDetails})
+      console.log("yyyy");
+  }
+
+  catch(e){
+
+  }
+})
+
+router.get('/users',async (req,res)=>{
+  try{
+    const allUsers= await adminHelper.getAllUsers()
+    res.render('vendor/users',{vendor: true, allUsers})
+  }
+  catch(e) {
+      console.log(e)
+  }
+
 })
 
 module.exports = router;

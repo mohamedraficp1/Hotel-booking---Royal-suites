@@ -1,0 +1,250 @@
+
+
+
+               <!-- dashboard inner -->
+               <div class="midde_cont">
+                  <div class="container-fluid">
+                     <div class="row column_title">
+                        <div class="col-md-12">
+                           <div class="page_title">
+                              <h2>Sales Report</h2>
+                           </div>
+                        </div>
+                     </div>
+                     <!-- row -->
+                      <div class="row column1">
+                        <div class="col-md-6 col-lg-3">
+                           <div class="full counter_section margin_bottom_30">
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-inr yellow_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">{{totalSaleAmount}}</p>
+                                    <p class="head_couter">Total Revenue</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                           <div class="full counter_section margin_bottom_30">
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-clock-o blue1_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">{{totalActiveBookings}}</p>
+                                    <p class="head_couter">Total Active Booking</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                           <div class="full counter_section margin_bottom_30">
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-cloud-download green_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">{{todaysSale}}</p>
+                                    <p class="head_couter">Todays revenue</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                           <div class="full counter_section margin_bottom_30">
+                              <div class="couter_icon">
+                                 <div> 
+                                    <i class="fa fa-comments-o red_color"></i>
+                                 </div>
+                              </div>
+                              <div class="counter_no">
+                                 <div>
+                                    <p class="total_no">{{todaySaleCount}}</p>
+                                    <p class="head_couter">Total Booking on today</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+  <div class="row my-5">
+      <div class="col-md-6">
+                           <div class="white_shd full margin_bottom_30">
+                              <div class="full graph_head">
+                                 <div class="heading1 margin_0">
+                                    <h2>Daily Sale</h2>
+                                 </div>
+                              </div>
+                              <div class="table_section padding_infor_info">
+                                 <div class="table-responsive-sm">
+                                      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+         <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+         
+
+<script>
+  console.log({{reformattedArrayDate.[0]}}) 
+var xValues = [{{#each reformattedArrayDate}} {{this}},{{/each}}];
+var yValues = [{{#each reformattedArrayTotal}} {{this}},{{/each}}];;
+var barColors = ["red", "green","blue","orange","brown","red", "green"];
+
+new Chart("myChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Day wise sales report"
+    }
+  }
+});
+</script>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>  
+                         
+  </div>
+  
+                     <div class="row">
+                        <!-- table section -->
+                        
+                        <div class="col-md-6">
+                           <div class="white_shd full margin_bottom_30">
+                              <div class="full graph_head">
+                                 <div class="heading1 margin_0">
+                                    <h2>Room Wise Sale</h2>
+                                 </div>
+                              </div>
+                              <div class="table_section padding_infor_info">
+                                 <div class="table-responsive-sm">
+                                  
+         <canvas id="mysChart" style="width:100%;max-width:600px"></canvas>
+         
+
+<script>
+var xValues = ["Superior room", "Junior Suite", "Executive Suite"];
+var yValues = [{{#each reFormattedArrayRoomTotal}} {{this}},{{/each}}];
+var barColors = [
+  "#b91d47",
+  "#00aba9",
+  "#2b5797",
+];
+
+new Chart("mysChart", {
+  type: "pie",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    title: {
+      display: true,
+      text: "World Wide Wine Production 2018"
+    }
+  }
+});
+</script>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>  
+                        <div class="col-md-6">
+                           <div class="white_shd full margin_bottom_30">
+                              <div class="full graph_head">
+                                 <div class="heading1 margin_0">
+                                    <h2>Daily Sale</h2>
+                                 </div>
+                              </div>
+                              <div class="table_section padding_infor_info">
+                                 <div class="table-responsive-sm">
+                                    <table class="table table-dark ">
+                                       <thead>
+                                         <tr>
+                                             <th>Sl No</th>
+                                             <th>Date</th>
+                                             <th>Total Sales</th>
+                                             <th>View Details</th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                           {{#each sales}}
+                                              <script>
+                                                function strDate(data){
+                                                date = new Date(data);
+                                                year = date.getFullYear();
+                                                month = date.getMonth()+1;
+                                                dt = date.getDate();
+
+                                                if (dt < 10) {
+                                                   dt = '0' + dt;
+                                                }
+                                                if (month < 10) {
+                                                   month = '0' + month;
+                                                }
+
+                                                return(year+'-' + month + '-'+dt);
+                                                
+                                                
+                                                }
+
+                                                   indate = strDate('{{this.booking.checkInDate}}')
+               
+                                                   document.getElementById('in{{this.booking._id}}').innerText
+                                                   = indate
+                                                   document.getElementById('out{{this.booking._id}}').innerText= outdate
+                                                console.log(indate)
+
+                                                </script>
+                                          <tr>
+                                             <td>{{inc @index}}</td>
+                                             <td>{{this._id}}</td>
+                                             <td>{{this.total}}</td>
+                                             
+                                             <td>
+                                           <a href="/vendor/sales-details-report/{{this._id}}" type="submit" class="btn btn-danger">View Details</a></td>
+              
+                                          
+                                          </tr>
+                                         {{/each}}
+                                         
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                      
+                     </div>
+                  </div>
+                 
+    
+               </div>
+               <!-- end dashboard inner -->
+            </div>
+            
+  
+            
+            
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+ <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>  
+    
+  

@@ -1,0 +1,166 @@
+
+               <!-- dashboard inner -->
+               <h2 class="text-center mt-5 pt-5">Edit Room</h2>
+               <div class="w-75 mx-auto mt-5">
+               <form action="/vendor/edit-room" enctype="multipart/form-data" id="roomAdding" method="post" >
+                  <div class="form-row">
+                     <div class="form-group col-md-6">
+                        <label for="inputEmail4">Room Name</label>
+                        <input type="text" class="form-control" required value="{{roomupdateDetails.rooms.roomName}}" name="roomName" placeholder="Room Name">
+                     </div>
+                     <div class="form-group col-md-6">
+                        <label for="inputPassword4">ROom Size</label>
+                        <input type="text" class="form-control" value="{{roomupdateDetails.rooms.roomSize}}"  name="roomSize" placeholder="RoomSize">
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group col-md-6">
+                        <label for="city">Choose a Category :</label>
+                                <div class="form-select">
+                                    <select name="category" id="category" >
+                                        <option value=value="{{roomupdateDetails.rooms.category}}">{{roomupdateDetails.rooms.category}}</option>
+                                         {{#each categories.category}}
+                                       <option value="{{this.categoryName}}">{{this.categoryName}}</option>
+                                         {{/each}}
+                                        
+                                    </select>
+                                    
+                                </div>
+                     </div>
+                     <div class="form-group col-md-6">
+                        <label for="inputPassword4">Price</label>
+                        <input type="text" class="form-control" required minlength="4" value="{{roomupdateDetails.rooms.price}}" required name="price" placeholder="Price">
+                     </div>
+                  </div>
+                   <div class="form-row">
+                     <div class="form-group col-md-6">
+                        <label for="inputEmail4"> Capacity</label>
+                        <input type="text" class="form-control" required value="{{roomupdateDetails.rooms.capacity}}" name="capacity" placeholder="Capacity">
+                     </div>
+                     <div class="form-group col-md-6">
+                        <label for="inputPassword4">Bed Type</label>
+                        <input type="text" class="form-control" required value="{{roomupdateDetails.rooms.bed}}" name="bed" placeholder="Bed Type">
+                     </div>
+                  </div>   
+                  <div class="form-row">
+                      <div class="form-group col-md-6">
+                     <label for="inputEmail4">Aminities</label>
+                         <div class="form-group form-check">
+                             {{#if roomupdateDetails.rooms.amenities.wifi}}
+                           <input type="checkbox" class="form-check-input" name="wifi" value="wifi" id="exampleCheck1" checked>
+                           {{else}}
+                           <input type="checkbox" class="form-check-input" name="wifi" value="wifi" id="exampleCheck1">
+                           {{/if}}
+                           <label class="form-check-label" for="exampleCheck1">Wifi</label>
+                        </div>
+                            <div class="form-group form-check">
+                            {{#if roomupdateDetails.rooms.amenities.ac}}
+                           <input type="checkbox" class="form-check-input" name="ac" value="AC"  id="exampleCheck1" checked>
+                           {{else}}
+                           <input type="checkbox" class="form-check-input" name="ac" value="AC"  id="exampleCheck1">
+                           {{/if}}
+                           <label class="form-check-label" for="exampleCheck1">AC</label>
+                        </div>
+                          <div class="form-group form-check">
+                              {{#if roomupdateDetails.rooms.amenities.tv}}
+                              <input type="checkbox" name="tv" value="TV"  class="form-check-input" id="exampleCheck1" checked>
+                              {{else}}
+                              <input type="checkbox" name="tv" value="TV"  class="form-check-input" id="exampleCheck1">
+                              {{/if}}
+                              <label class="form-check-label" for="exampleCheck1">TV</label>
+                           </div>
+                     
+                            <div class="form-group form-check">
+                                 {{#if roomupdateDetails.rooms.amenities.power}}
+                              <input type="checkbox" name="power" value="Power Backup"  class="form-check-input" id="exampleCheck1" checked>
+                              {{else}}
+                              <input type="checkbox" name="power" value="Power Backup"  class="form-check-input" id="exampleCheck1">
+                              {{/if}}
+                              <label class="form-check-label" for="exampleCheck1">Power Backup</label>
+                           </div>
+                                                <div class="form-group form-check">
+                            {{#if roomupdateDetails.rooms.amenities.parking}}
+                              <input type="checkbox" class="form-check-input" name="parking" value="Parking"  id="exampleCheck1">
+                              {{else}}
+                              <input type="checkbox" class="form-check-input" name="parking" value="Parking"  id="exampleCheck1" checked>
+                              {{/if}}
+                              <label class="form-check-label" for="exampleCheck1">Parking</label>
+                           </div>
+                       </div>
+                       <div class="col-md-6">
+                        <label for="inputEmail4">Room Count</label><br>
+                         <input type="number" class="form-control" required value="{{roomupdateDetails.rooms.roomCount}}" name="roomCount" placeholder="Room Count">
+                       </div>
+                  </div>
+                   <div class="row">
+                      
+                       <div class="col-md-6">
+                        <label for="inputEmail4">Room Description</label><br>
+                         <textarea name="description" required rows="4" cols="50" >{{roomupdateDetails.rooms.description}}</textarea>
+                       </div>
+                   </div>
+                
+                  {{!-- <div class="row mt-5">
+                     {{#each roomupdateDetails.rooms.img}}
+                     <div class="col-sm-3 imgUp">
+                        <div class="imagePreview" style="background-image: url('/images/room-images/{{this.filename}}')"></div>
+                     <label class="btn btn-primary">
+							Upload<input type="file" src="/images/room-images/{{this.filename}}" class="uploadFile img" value="Upload Photo" name="multi-files" accept='image/*' style="width: 0px;height: 0px;overflow: hidden;">
+				      </label>
+                  </div><!-- col-2 -->
+                  {{/each}}
+                  <i class="fa fa-plus imgAdd"></i>
+                  {{!-- <input type="file" name="multi-files" accept='image/*' multiple> --}}
+                  </div><!-- row --> --}}
+                  <button class="btn btn-success" type="submit">Submit Form</button>
+                  
+                  </form>
+              
+               </div>
+               <!-- end dashboard inner -->
+            </div>
+         </div>
+      </div>
+      <script>
+          $(".imgAdd").click(function(){
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-3 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" value="Upload Photo"  name="multi-files" accept="image/*" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del" , function() {
+// 	to remove card
+  $(this).parent().remove();
+// to clear image
+  // $(this).parent().find('.imagePreview').css("background-image","url('')");
+});
+$(function() {
+    $(document).on("change",".uploadFile", function()
+    {
+    		var uploadFile = $(this);
+        var files = !!this.files ? this.files : [];
+        if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+ 
+        if (/^image/.test( files[0].type)){ // only image file
+            var reader = new FileReader(); // instance of the FileReader
+            reader.readAsDataURL(files[0]); // read the local file
+ 
+            reader.onloadend = function(){ // set image data as background of div
+                //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url("+this.result+")");
+            }
+        }
+      
+    });
+});
+      </script>
+      <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/
+    jquery/3.3.1/jquery.min.js">
+    </script>
+   
+ <script>
+   $("#roomAdding").validate();
+</script>
+
+
+      

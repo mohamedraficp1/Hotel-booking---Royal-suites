@@ -1,38 +1,154 @@
-<h2 class="mt-5 text-center">Upcoming Bookings</h2>
 
-<div class="container my-5">
-    <div class="row">
-        <table class="table">
-  <thead class="thead-dark">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+
+<script src=
+"https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js">
+  </script>
+ <h2 class="mt-5 text-center">Upcoming Bookings</h2>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+function confirmdelete() {
+
+swal({
+  title: "Are you sure?",
+  text: "Once cancelled, you will not be able to recover that booked room",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    $.ajax({
+        url: '/confirm-delete',   
+        method: "post",
+        data: $('#delete-order').serialize(),
+            success:(status)=>{
+              if(status){
+                  $('#orderList').load(location.href + "#orderList");
+              }
+              
+        }
+
+    })
+    swal("Poof! Your Booking has been Cancelled!", {
+      icon: "success",
+    });
+  } else {
+    swal("Your Booking is safe!");
+  }
+});
+}
+  </script>
+  <script>
+function deleteOrders() {
+/*const $contineForm =$('#delete-order')
+$contineForm.on('submit', submitionHandler)
+
+function submitionHandler (e) {
+  e.preventDefault()*/
+
+   $.ajax({
+        url: '/confirm-delete',   
+        method: "post",
+        data: $contineForm.serialize(),
+            success:(status)=>{
+              location.reload()
+        }
+
+    }).done(response => {
+    console.log(response)
+  })
+}  
+//}
+
+</script>
+
+
+<div class="container">
+        <br>
+    
+<table  class="table table-bordered" style="width:100%">
+        <thead  class="thead-dark">
+            <tr>
+               <th scope="col">Sl No</th>
+              <th scope="col">Room Name</th>
+              <th scope="col">Hotel Name</th>
+              <th scope="col">checkIn</th>
+              <th scope="col">checkOut</th>
+              <th scope="col">Room Count</th>
+              <th scope="col">Status</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Payement Metod </th>
+              <th scope="col">Cancel </th>
+                
+            </tr>
+        </thead>
+        <tbody>
+       {{#each data}}
+    
     <tr>
-      <th scope="col">Sl No</th>
+       <td>{{inc @index}}</td>
+      <td>{{this.booking.roomDetails.rooms.roomName}}</td>
+      <td>{{this.booking.roomDetails.name}}</td>
+     <td><span id="in{{this.booking._id}}"></span></td>
+      <td><span id="out{{this.booking._id}}"></span></td>
+      <td>{{this.booking.noOfRoom}}</td>
+      <td>{{this.booking.status}}</td>
+      <td>{{this.booking.totalAmount}}</td>
+       <td>{{this.booking.payementMetod}}</td>
+      <form id="delete-order">
+        <input type="text" name="ids" value="{{this.booking._id}}" hidden>
+         <td> <a onclick="confirmdelete()" class="btn btn-danger text-white" >Cancel Booking</a></td>
+      </form>
+     
+    </tr>
+      <script>
+        function strDate(data){
+        date = new Date(data);
+        year = date.getFullYear();
+        month = date.getMonth()+1;
+        dt = date.getDate();
+
+        if (dt < 10) {
+          dt = '0' + dt;
+        }
+        if (month < 10) {
+          month = '0' + month;
+        }
+
+        return(year+'-' + month + '-'+dt);
+        
+        
+        }
+
+         indate = strDate('{{this.booking.checkInDate}}')
+         outdate = strDate('{{this.booking.checkOutDate}}')
+         document.getElementById('in{{this.booking._id}}').innerText
+         = indate
+          document.getElementById('out{{this.booking._id}}').innerText= outdate
+        console.log(indate)
+
+      </script>
+    {{/each}}
+        </tbody>
+        <tfoot>
+            <tr>
+       <th scope="col">Sl No</th>
       <th scope="col">Room Name</th>
       <th scope="col">Hotel Name</th>
       <th scope="col">checkIn</th>
       <th scope="col">checkOut</th>
       <th scope="col">Room Count</th>
       <th scope="col">Status</th>
+      <th scope="col">Amount</th>
+       <th scope="col">Payement Metod </th>
        <th scope="col">Cancel </th>
-    </tr>
-  </thead>
-  <tbody>
-      {{#each data}}
-    <tr>
-       <td>{{inc @index}}</td>
-      <td>{{this.booking.roomDetails.rooms.roomName}}</td>
-      <td>{{this.booking.roomDetails.name}}</td>
-     <td>{{this.booking.checkInDate}}</td>
-      <td>{{this.booking.checkOutDate}}</td>
-      <td>{{this.booking.noOfRoom}}</td>
-      <td>{{this.booking.status}}</td>
-      <td> <a href="/cancel-order/{{this.booking._id}}" class="btn btn-danger">Cancel</a></td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
-
-
-    </div>
+            </tr>
+        </tfoot>
+    </table>
 </div>
 
 <h2 class="mt-5 text-center">Cancelled Bookings</h2>
@@ -71,3 +187,24 @@
 
     </div>
 </div>
+{{!--  Table link --}}
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+
+<script>
+ $(document).ready( function () {
+
+    $('#Table1').wrap('<div id="hide" style="display:none"/>');
+   
+         $('#hide').css( 'display', 'block' );
+     } );
+      
+  var table = $('#Table1').DataTable();
+  
+
+</script>
+{{!--  Table link --}}
+

@@ -10,6 +10,8 @@ var adminRouter = require('./routes/admin');
 var session = require('express-session');
 const nocache = require("nocache");
 const passport = require('passport');
+const dotenv= require('dotenv')
+dotenv.config()
 var app = express();
 app.use(nocache());
 // view engine setup

@@ -3,6 +3,7 @@ var Admin= require('../models/admin')
 var bcrypt= require('bcrypt')
 var mongoose = require('mongoose')
 const nodemailer = require('nodemailer')
+
 module.exports={
     doLogin: (userData)=>{
         return new Promise(async(resolve,reject)=>{
@@ -79,7 +80,7 @@ module.exports={
     getVendors : ()=>{
         return new Promise(async(resolve,reject)=>{ 
             let displayVendor = await Admin.aggregate(
-                [ { $match : { isVerified : "pending" } } ]
+                [ { $match : { isVerified : "pending",role:"vendor" } } ]
             )
                 resolve(displayVendor)
                 console.log(displayVendor)
@@ -90,7 +91,7 @@ module.exports={
     getApprovedVendors : ()=>{
         return new Promise(async(resolve,reject)=>{ 
             let displayApprovedVendor = await Admin.aggregate(
-                [ { $match : { isVerified : "approved" } } ]
+                [ { $match : { isVerified : "approved",role:"vendor" } } ]
             )
                 resolve(displayApprovedVendor)
                 console.log(displayApprovedVendor)
@@ -153,7 +154,7 @@ module.exports={
                 }
             ])
             resolve(displayCategory[0])
-            console.log(displayCategory)
+            console.log(displayCategory[0])
         })
     },
     deleteCategory:(id)=>{
@@ -173,6 +174,20 @@ module.exports={
     rejectVendor:(id)=>{
         return new Promise(async(resolve,reject)=>{ 
             let approvevendor = await Admin.updateOne({'_id': id},{$set : {'isVerified': "rejected"}})
+            resolve(approvevendor)
+        })
+    },
+
+    blockuser:(id)=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let approvevendor = await Admin.updateOne({'_id': id, role:"user"},{$set : {'isVerified': "blocked"}})
+            resolve(approvevendor)
+        })
+    },
+
+    unblockuser:(id)=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let approvevendor = await Admin.updateOne({'_id': id, role:"user"},{$set : {'isVerified': "approved"}})
             resolve(approvevendor)
         })
     },
@@ -200,6 +215,29 @@ module.exports={
         })
     },
 
+    getAllUsers : ()=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let displayUser = await Admin.aggregate(
+                [ { $match : { isVerified : "approved",role:"user" } } ]
+            )
+                resolve(displayUser)
+                console.log(displayUser)
+         
+        })
+    },
+
+    getAllBlockedUsers : ()=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let displayUser = await Admin.aggregate(
+                [ { $match : { isVerified : "blocked",role:"user" } } ]
+            )
+                resolve(displayUser)
+                console.log(displayUser)
+         
+        })
+    },
+
+
     getCatogoryRooms : (id)=>{
         return new Promise(async(resolve,reject)=>{ 
             let categoryDetail = await Admin.aggregate( [{ $match : { role : "admin" } },{ $unwind : "$category" },{$match:{'category._id':id}}] )
@@ -210,5 +248,315 @@ module.exports={
             
             resolve(displayCatRoom)
         })
-    }
+    },
+
+    changeBannerImage: (data,images)=> {
+        return new Promise(async(resolve,reject)=>{
+            let category=await Admin.updateOne({role:"admin"},
+            {$push:{banner:{
+                title: data.title,
+                subTitle:data.subtitle,
+                image: images,
+                bannerIsDeleted: false
+            }}
+        }).then((data)=>{
+            console.log(data)
+            resolve(data)
+        })
+    })
+    },
+    getBanner : ()=>{
+        return new Promise(async(resolve,reject)=>{ 
+            let displayBanner = await Admin.aggregate([
+                {$match:{role: "admin"}},
+                {
+                    $project:{
+                        _id:0,
+                        banner:{
+                            $filter:{
+                                input: '$banner',
+                                as:'banner',
+                                cond: {
+                                    $eq: [
+                                        '$$banner.bannerIsDeleted',false,
+                                    ]
+                                },
+                                
+                            }, 
+                        },
+                    }
+                }
+            ])
+            resolve(displayBanner[0])
+            console.log(displayBanner[0].banner.length)
+        })
+    },
+
+    deleteBanner:(id)=>{
+        return new Promise(async(resolve,reject)=>{ 
+            try{
+                let deleteBanner = await Admin.updateOne({'banner._id': id},{$set : {'banner.$.bannerIsDeleted': true}})
+                resolve(deleteBanner)
+
+            }
+            catch(e){
+                console.log(e)
+            }
+            
+        })
+    },
+
+    getTotalSales: (emailId) => {
+        try{
+        return new Promise(async (resolve, reject) => {
+          const sales = await Admin.aggregate([
+              {
+                $unwind: '$booking',
+              },
+              {
+                $match: {
+             
+               'booking.bokingStatus': 'confirmed'
+                
+                },
+              },
+            
+              {
+                $group: {
+                  _id: {
+                    date: '$booking.bookingDate',
+                    vendor: '$booking.roomDetails.hotelName',
+                   
+                  },
+                  total: { $sum: '$booking.totalAmount' },
+                },
+              },
+
+              { $sort : { date: -1 } }
+            ])
+           
+    
+          resolve(sales);
+        });
+      }
+      catch(e){
+        console.log(e);
+      }
+      },
+
+      getTotalSalesEachday: (emailId) => {
+        try{
+        return new Promise(async (resolve, reject) => {
+          const sales = await Admin.aggregate([
+              {
+                $unwind: '$booking',
+              },
+              {
+                $match: {
+             
+               'booking.bokingStatus': 'confirmed'
+                
+                },
+              },
+            
+              {
+                $group: {
+                  _id: {
+                    date: '$booking.bookingDate',
+                  },
+                  total: { $sum: '$booking.totalAmount' },
+                },
+              },
+
+              { $sort : { date: -1 } }
+            ])
+           
+    
+          resolve(sales);
+        });
+      }
+      catch(e){
+        console.log(e);
+      }
+      },
+
+      getTotalsaleAmount: () => {
+        try{
+        return new Promise(async (resolve, reject) => {
+          const sales = await Admin.aggregate([
+              {
+                $unwind: '$booking',
+              },
+              {
+                $match: {
+                  $and: [
+                    { 'booking.bokingStatus': 'confirmed' },
+                  ],
+                },
+              },
+              {
+                $group: {
+                  _id: ' ',
+                  total: { $sum: '$booking.totalAmount' },
+                },
+              },
+            ])
+           
+    
+          resolve(sales);
+        });
+      }
+      catch(e){
+        console.log(e);
+      }
+      },
+      getTodaysSalesCount: () => {
+        try {
+          return new Promise(async (resolve, reject) => {
+            const today = new Date();
+            const year = today.getFullYear();
+    
+            const month = (`0${today.getMonth() + 1}`).slice(-2);
+            const day = today.getDate();
+            const date = (`${year}-${month}-${day}`);
+            console.log(date)
+    
+            const bookings = await Admin.aggregate([
+                { $unwind: '$booking' },
+                {
+                  $match: {
+                    $and: [
+                      { 'booking.bokingStatus': 'confirmed' },
+                      { 'booking.bookingDate': date  },
+                    ],
+                  },
+                },
+              ])
+              
+            resolve(bookings);
+          });
+        } catch (error) {
+          reject(error);
+        }
+      },
+
+      getActiveBookings: () => {
+        try {
+          return new Promise(async (resolve, reject) => {
+            const today = new Date();
+    
+            const bookings = await Admin.aggregate([
+                { $unwind: '$booking' },
+                {
+                  $match: {
+                    $and: [
+                      { 'booking.bokingStatus': 'confirmed' },
+                      { 'booking.checkInDate': { $lte: today } },
+                      { 'booking.checkOutDate': { $gte: today } },
+                    ],
+                  },
+                },
+              ])
+              
+            resolve(bookings);
+          });
+        } catch (error) {
+          reject(error);
+        }
+      },
+
+      messagesFromClient:async(queryOne,queryTwo)=>{
+          try{
+             const addMessage= await Admin.updateOne(queryOne,queryTwo)
+             return addMessage
+          }
+          catch(e){
+              console.log(e)
+          }
+      },
+
+        messageCount:async()=>{
+            try{
+                const count = await Admin.aggregate([queryOne,queryTwo,queryThree]) 
+                return count
+            }
+            catch(e){
+                console.log(e)
+            }
+            
+        },
+
+      getTodaysSalesAmount: () => {
+        try {
+          return new Promise(async (resolve, reject) => {
+            const today = new Date();
+            const year = today.getFullYear();
+    
+            const month = (`0${today.getMonth() + 1}`).slice(-2);
+            const day = today.getDate();
+            const date = (`${year}-${month}-${day}`);
+    
+            const bookings = await Admin.aggregate([
+                { $unwind: '$booking' },
+                {
+                  $match: {
+                    $and: [
+                      { 'booking.bokingStatus': 'confirmed' },
+                      { 'booking.bookingDate': date  },
+                    ],
+                  },
+                },
+
+                {
+                  $group: {
+                    _id: ' ',
+                    total: { $sum: '$booking.totalAmount' },
+                  },
+                },
+              ])
+              
+            resolve(bookings);
+          });
+        } catch (error) {
+          reject(error);
+        }
+      },
+
+      getTodaysSalesPerVendor: () => {
+        try {
+          return new Promise(async (resolve, reject) => {
+            const today = new Date();
+            const year = today.getFullYear();
+    
+            const month = (`0${today.getMonth() + 1}`).slice(-2);
+            const day = today.getDate();
+            const date = (`${year}-${month}-${day}`);
+    
+            const bookings = await Admin.aggregate([
+                { $unwind: '$booking' },
+                {
+                  $match: {
+                    $and: [
+                      { 'booking.bokingStatus': 'confirmed' },
+                      { 'booking.bookingDate': date  },
+                    ],
+                  },
+                },
+
+                {
+                  $group: {
+                    _id: '$booking.roomDetails.hotelName',
+                    total: { $sum: '$booking.totalAmount' },
+                  },
+                },
+              ])
+              
+            resolve(bookings);
+          });
+        } catch (error) {
+          reject(error);
+        }
+      },
+  
+  
 }

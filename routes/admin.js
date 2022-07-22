@@ -4,10 +4,14 @@ var Admin= require('../models/admin')
 const adminHelper= require("../helpers/adminHelper");
 const async = require('hbs/lib/async');
 const mailer = require('../config/email')
+const store= require('../config/multer')
 var mongoose = require('mongoose')
 var Sms =require('../config/verify')
 const nodemailer = require('nodemailer');
 const client = require('twilio')('AC1771c44d73f01a6a895be8eeb56b103f', 'ff24b7bc240cf38d8d18c7efaf48d157');
+const multer = require('multer');
+const { Store } = require('express-session');
+const { response } = require('../app');
 
 
 /* GET users listing. */
@@ -165,8 +169,86 @@ router.get('/logout', function(req, res) {
   res.redirect('/admin/login');
 });
 
+router.get('/users', function(req,res){
+  adminHelper.getAllUsers().then((response)=>{
+    adminHelper.getAllBlockedUsers().then((users)=>{
+    res.render('admin/users',{admin: true,response: response, users})
+    
+  })
+})
+})
 
+router.get('/vendors', function(req,res){
+  adminHelper.getApprovedVendors().then((response)=>{
+    adminHelper.getVendors().then((vendors)=>{
+    res.render('admin/vendor',{admin: true,response: response, vendors})
+    
+  })
+})
+})
 
+router.get('/change-banner', function(req,res){
+  adminHelper.getBanner().then((response)=>{
+    res.render('admin/change-banner',{admin: true,response: response})
+  })
+})
+
+router.get('/block-user/:id',function(req, res) {
+  let id= mongoose.Types.ObjectId(req.params.id)
+  adminHelper.blockuser(id).then((resp)=>{
+    res.redirect('/admin/users')
+  })
+})
+
+router.get('/unblock-user/:id',function(req, res) {
+  let id= mongoose.Types.ObjectId(req.params.id)
+  adminHelper.unblockuser(id).then((resp)=>{
+    res.redirect('/admin/users')
+  })
+})
+
+router.get('/sales',async function(req,res){
+  sales= await adminHelper.getTotalSales()
+    totalSales = await adminHelper.getTotalsaleAmount()
+    todaySaleAmount = await adminHelper.getTodaysSalesAmount()
+    todySaleCount= await adminHelper.getTodaysSalesCount()
+    todaysTotaleSaleCount= todySaleCount.length
+    activeBooking= await adminHelper.getActiveBookings()
+    activeBookingCount= activeBooking.length
+    salespervendor= await adminHelper.getTodaysSalesPerVendor()
+    salesperDay = await adminHelper.getTotalSalesEachday()
+    const reformattedArrayDate =salespervendor.map(x => (x._id));
+     const reformattedArrayTotal =salespervendor.map(x => (x.total));
+    res.render('admin/sale',{admin: true,sales,totalSales, todaySaleAmount,todaysTotaleSaleCount,activeBookingCount,activeBooking,reformattedArrayDate,
+      reformattedArrayTotal })
+    console.log("rrrr");   
+    console.log(sales);
+    console.log(totalSales);
+    console.log(todaySaleAmount);
+    console.log(todySaleCount);
+    console.log(salespervendor);
+    console.log(reformattedArrayDate);
+    console.log(reformattedArrayTotal);
+})
+
+router.post('/change-banner-image', store.array('banner-images'), (req, res) => {
+    let images = req.files
+    console.log(req.body)
+    console.log(req.files)
+    adminHelper.changeBannerImage(req.body, req.files). then((response)=>{
+      console.log(response);
+      res.redirect('/admin/change-banner')
+    })
+});
+
+router.get('/delete-banner/:id',function(req, res) {
+  let id= mongoose.Types.ObjectId(req.params.id)
+  console.log(id);
+  adminHelper.deleteBanner(id).then((resp)=>{
+    res.redirect('/admin/change-banner')
+  })
+})
+  
 // async function run() {
 //   const admin= await Admin.create({email: "admin@royals.com", password:"$2a$10$du5LkR8gyq8fo13yTOZ54OwpQG1mNND.RNI0JZdmdnvzintVr4oFe", role: "admin"})
 //   await admin.save

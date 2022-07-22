@@ -6,10 +6,15 @@ const userHelper = require('../helpers/userHelper')
 const { addRoom } = require('../helpers/vendorHelper');
 const mongoose= require('mongoose');
 const { cancelOrder } = require('../helpers/userHelper');
+const mailer = require('../config/email')
 const { response } = require('../app');
+const store= require('../config/multer')
+var Sms =require('../config/verify');
+var moment= require('moment')
 require('../config/outh')
 
-let roomfilterData = []
+let totalAmountPaid = 0
+let roomfilterData
 function isLoggedIn(req,res, next) {
   req.user ? next() : res.sendStatus(401)
 }
@@ -21,11 +26,14 @@ function isUsedLoggedIn(req,res, next) {
 /* GET home page. */
 router.get('/', function(req, res, next) {
   adminHelper.getAllRoom().then((response)=>{
-   
+   userHelper.getlatestBanner().then((data)=>{
     console.log(req.session.name);
+    console.log("tttt");
+    const length= data.length
+    console.log(data[length-1]);
   // res.render('user/index', { users: true,response:response,usName:req.session.userName });
-  res.render('user/index', { users: true,response:response,name:req.session.userName,pic:req.session.photo, profileName:req.session.user });
-  
+  res.render('user/index', { users: true,data:data[length-1],response:response,name:req.session.userName,pic:req.session.photo, profileName:req.session.user });
+})
 });
 });
 
@@ -51,6 +59,43 @@ router.post('/login', function(req, res, next) {
     }
   })
 });
+
+router.post('/booking-login', function(req, res, next) {
+  userHelper.doLogin(req.body).then((resp)=>{
+    if(resp.status){
+      req.session.userloggedIn = true;
+      req.session.user = resp.user
+      req.session.phone=resp.phone
+      req.session.email=resp.email
+      res.json({response:true})
+      
+    }
+    else if(resp.userErr){
+      req.session.userErr= true
+      res.json({response:false})
+    }
+    else {
+      req.session.userErr=true
+      res.json({response:false})
+    }
+  })
+});
+
+router.post('/update-profile',( req,res)=>{
+  userHelper.doprofileUpdate(req.body).then((data)=>{
+    res.redirect('/my-profile')
+  })
+})
+
+router.post('/update-profile-image',store.array('profile-images'), (req,res)=>{
+  userHelper.doUpdateImage(req.body.email, req.files).then((data)=>{
+    res.redirect('/my-profile')
+    console.log("hhhhh")
+         console.log(req.body);
+  console.log(req.files);
+  })
+
+})
 
 
 router.get('/rooms/:id', (req,res)=> {
@@ -79,21 +124,30 @@ router.get('/rooms/:id', (req,res)=> {
 // });
 // });
 
+
+
 router.get('/hotel-rooms',  function(req, res, next) {
   adminHelper.getCategory().then((data)=>{
   adminHelper.getAllRoom().then((response)=>{
+    
     adminHelper.getApprovedVendors().then((vendorData)=>{
     // res.send(`hello ${req.user.displayName}`);
     // req.session.userName = req.user.displayName                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
     // req.session.photo=req.user.photos[0].value,
-   
     // req.session.userLogged= true;
     res.render('user/rooms', { users: true, roomfilterData:roomfilterData,  response:response ,userName: req.session.user,name:req.session.user, data:data,vendorData:vendorData});
-    
+  
   });  
 }) 
 });
 });
+
+router.get('/searched-rooms',async(req,res)=>{
+  roomfilterData= await userHelper.searchdbData()
+  console.log("dtatat");
+  console.log(roomfilterData);
+  res.redirect('/hotel-rooms') 
+})
 
 router.get('/auth/google',
   passport.authenticate('google',{scope: ['email', 'profile']})
@@ -114,24 +168,61 @@ router.get('/signup',(req,res,next)=>{
   res.render('user/user-signup')
 })
 
-router.post('/booking-details',isUsedLoggedIn,(req,res,next)=>{
+router.post('/booking-details',(req,res)=>{
+  try{
+
   userHelper.getBookingDetails(req.session.email).then((response)=>{
     userHelper.getBookingCancelDetails(req.session.email).then((responseData)=>{
-    res.render('user/booking-history',{ users: true,profileName:req.session.user,cancelledData:responseData,emailId:req.session.email,data:response, phone:req.session.phone})
+      const bookings = response;
+
+      for (const x in bookings) {
+        checkIn = new Date(bookings[x].booking.checkInDate).setHours(0, 0, 0, 0);
+        checkOut = new Date(bookings[x].booking.checkOutDate).setHours(0, 0, 0, 0);
+        const now = new Date().setHours(0, 0, 0, 0);
+        if (now >= checkIn && now <= checkOut) {
+          bookings[x].isActive = true;
+        } else if (now >= checkOut) {
+          bookings[x].checkedOut = true;
+        } else if (now <= checkIn && now <= checkOut) {
+          if (bookings[x].bookingStatus === 'cancelled') {
+            bookings[x].cancelled = true;
+          } else {
+            bookings[x].booking.canCancel = true;
+          }
+        }
+        console.log("jkjk");
+      console.log(bookings);
+    
+      }
+
+      res.render('user/booking-history',{ users: true,profileName:req.session.user,cancelledData:responseData,emailId:req.session.email,data:bookings, phone:req.session.phone})
   })
 })
+  }catch(e){
+    console.log("error");
+    console.log(e)
+  }
   
 })
 
 router.get('/my-profile',(req,res,next)=>{
-  res.render('user/user-profile',{ users: true,profileName:req.session.user,emailId:req.session.email, phone:req.session.phone})
+  userHelper.getuserDetail(req.session.email).then((datas)=>{
+  res.render('user/user-profile',{ users: true,profileName:datas.name,emailId:req.session.email, phone:datas.phoneNumber,address: datas.address, profilepicture: datas.profileImage[0].filename})
+  console.log(datas)
+  console.log('yyygg');
+  })
 })
 
 router.post('/search-room',function(req, res) {
   req.session.booking= req.body
   console.log()
+  userHelper.getSearchResultRooms(req.body).then((results)=>{
   userHelper.getSearchRoom(req.body).then((datas)=>{
-    res.render('user/search-results',{users: true,datas:datas, content:req.session.booking,profileName:req.session.user})
+    res.render('user/search-results',{users: true,datas:results, content:req.session.booking,profileName:req.session.user})
+    // res.redirect('/searched-rooms')
+    console.log("hththth");
+    console.log(results)
+  })
   })
 })
 
@@ -139,12 +230,13 @@ router.get('/login',(req,res,next)=>{
   res.render('user/user-login')
 })
 
-router.get('/cancel-order/:id',(req,res,next)=>{
-  let cancelOrder= mongoose.Types.ObjectId(req.params.id)
+router.post('/confirm-delete',(req,res,next)=>{
+  let cancelOrder= mongoose.Types.ObjectId(req.body.ids)
   console.log("rrrr")
+  console.log(req.body);
   console.log(cancelOrder);
     userHelper.cancelOrder(cancelOrder).then((data)=>{
-      res.redirect('/my-profile')
+      res.json({status:true})
     })
 })
 
@@ -155,10 +247,14 @@ router.post('/confirmBook',(req,res,next)=>{
   console.log(rids)
   let roomNo = Number(req.session.booking.rooms)  
   userHelper.getRoomDetails(rids).then((data)=> {
-  userHelper.addBooking(req.session.email,req.session.booking.checkIn,req.session.booking.checkOut,roomNo,data[0]).then((datas)=>{
-    console.log('datas')
-    console.log(datas)
-    res.render('user/confirm-order',{users: true,datas:datas, content:req.session.booking,profileName:req.session.user})
+  userHelper.addBooking(req.session.email,req.session.booking.checkIn,req.session.booking.checkOut,roomNo,data[0],totalAmountPaid).then((response)=>{
+    mailer.doEmail(req.session.email)
+    req.session.totalAmount= totalAmountPaid
+    console.log(response);
+   console.log('dddd');
+   console.log(totalAmountPaid); 
+    // res.render('user/confirm-order',{users: true,datas:datas, content:req.session.booking,profileName:req.session.user})
+    res.json({status:true})
   })
 })
 })
@@ -175,23 +271,44 @@ router.get ('/logout',(req,res)=> {
 router.post('/search-filter',(req,res)=>{
   console.log('reult;....');
   console.log(req.body)
-  let filterData=[]
-  let vendorData=[]
-  let priceData=[]
 
-  let {category,wifi,ac,tv} = req.body
+  let filterData=[]
+  let amenities=[]
+  console.log(amenities)
+ 
+
+  let {category,wifi,ac,tv,price} = req.body
   console.log(category)
   console.log(ac)
   console.log(tv)
+  console.log(price)
   
   for(let i of category){
-    filterData.push({'rooms.category' :i})
+    filterData.push({'searchResults.rooms.category' :i})
   }
 
-  let wifiData= {'rooms.amenities.wifi':wifi}
-  let tvData= {'rooms.amenities.tv':tv}
-  let acData= {'rooms.amenities.ac':ac}
-  let amenities= [...filterData,wifiData,tvData,acData]
+  console.log(filterData);
+  let pricedatas;
+
+  let wifiData= {'searchResults.rooms.amenities.wifi':wifi}
+  let tvData= {'searchResults.rooms.amenities.tv':tv}
+  let acData= {'searchResults.rooms.amenities.ac':ac}
+  // let prizeData = {'searchResults.rooms.price':Prize}
+  if (wifi){
+    amenities.push(wifiData)
+  }
+
+  if (tv){
+    amenities.push(tvData)
+  }
+
+  if (ac){
+    amenities.push(acData)
+  }
+
+  
+  console.log(amenities)
+  // let amenities= [wifiData,tvData,acData]
   console.log('revv')
   console.log(amenities)
 //   for(let j of vendor){
@@ -202,27 +319,63 @@ router.post('/search-filter',(req,res)=>{
 //     priceData.push({$lt:{'rooms.price' :k}})
 //   }
 //   console.log("Dataaaa");
-//   console.log(filterData);
-//   console.log(vendorData)
-console.log(amenities.length);
-  if(amenities.length){
-     userHelper.searchFilter(amenities).then((respo)=>{
-    console.log(respo);
-    console.log("ttt");
-    roomfilterData = respo;
-    console.log(roomfilterData);
-    res.json({status:true});
-  })
- 
-  }
-  else {
-    adminHelper.getAllRoom().then((response)=>{
-      roomfilterData = response;
+  console.log(amenities.length);
+  console.log(filterData.length)
+
+  if(amenities.length && filterData.length){
+    userHelper.searchFilter(filterData,amenities).then((respo)=>{
+      roomfilterData = respo;
       res.json({status:true});
     })
+    .catch(function(e) {
+      console.error(e.message); 
+    })
   }
- 
+
+ else if(filterData.length==0 && amenities.length!=0){
+    userHelper.searchFilterOne(amenities).then((respo)=>{
+      roomfilterData = respo;
+      res.json({status:true});
+    })
+    .catch(function(e) {
+      console.error(e.message); 
+    })
+  }
+
+  else if(amenities.length==0 && filterData.length!=0 ) {
+    userHelper.searchFilterOne(filterData).then((respo)=>{
+      roomfilterData = respo;
+      res.json({status:true});
+    })
+    .catch(function(e) {
+      console.error(e.message); 
+    })
+  }
+
+  else {
+    userHelper.searchdbData().then((respo)=>{
+      roomfilterData = respo;
+      res.json({status:true});
+    })
+    .catch(function(e) {
+      console.error(e.message); 
+    })
+  }
+  
   })
+
+  router.post('/contact-us',async  (req,res)=>{
+    try{
+      console.log(req.body)
+      const message=await adminHelper.messagesFromClient({role:"admin"},{$push:{messages:req.body}})  
+      console.log(message)
+      res.json({status: true})
+    }
+    catch(e){
+      console.log(e)
+    }
+  })
+ 
 
 // router.route('/logout')
 //     .get((req, res) => {
@@ -240,34 +393,66 @@ console.log(amenities.length);
 
 
 
-router.post('/book-room', function(req, res){
+router.post('/book-room', async function(req, res){
   console.log(req.body)
-  req.session.bookedRoomId= req.body.roomID
-  // console.log("hhhh");
-  // console.log(req.session.bookedRoomDetail.roomID);
-  let roomNo = Number(req.session.booking.rooms) 
-  let roomId= mongoose.Types.ObjectId(req.session.bookedRoomId)
-  userHelper.getRoomDetails(roomId).then((roomData)=>{
-    let price = Number (roomData[0].rooms.price)
-    let subtotal= Number(price*roomNo)
-    let tax=Number(0.18 * subtotal)
-    let total=subtotal+tax
-    console.log(total)
-    req.session.bookedVendorId= roomData._id
-    res.render('user/book-now',{users: true,profileName:req.session.user,emailId:req.session.email,tax:tax,totalAmount:total,subtotal:subtotal, roomData:roomData, searchData:req.session.booking})
-  })
+    req.session.bookedRoomId= req.body.roomID
+    console.log("hhhh");
+    // console.log(req.session.bookedRoomDetail.roomID);
+    let roomNo = Number(req.session.booking.rooms) 
+    let roomId= mongoose.Types.ObjectId(req.session.bookedRoomId)
+    const roomData= await userHelper.getRoomDetails(roomId)
+      const date_1 = new Date(req.session.booking.checkIn);
+      const date_2 = new Date(req.session.booking.checkOut);
+      let price = Number (roomData[0].rooms.price)
+      const difference = date_2.getTime() - date_1.getTime();
+      req.session.roomName = roomData[0].rooms.roomName
+      req.session.hotelName = roomData[0].hotelName
+      console.log("dateeeeee");
+      console.log(date_2.getTime());
+      console.log(date_1.getTime());
+      console.log(difference)
+      console.log(roomData)
+      const TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
+      console.log(TotalDays);
+      const days= Number(TotalDays)
+      const subtotal= Number(price*roomNo*days)
+      const tax=Number(0.18 * subtotal)
+      const total=subtotal+tax
+      console.log(total)
+      totalAmountPaid = total
+      req.session.bookedVendorId= roomData._id
+      res.render('user/book-now',{users: true,profileName:req.session.user,emailId:req.session.email,tax:tax,totalAmount:total,subtotal:subtotal, roomData:roomData, searchData:req.session.booking})
+
 })
 
-router.post('/pay-now',function(req, res){
- userHelper.getBookingDetails(req.session.email).then((resp)=>{
+router.post('/pay-now',async function(req, res){
+  try{
+    const resp = await userHelper.getlastBooking(req.session.email)
+    if (resp) {
+      let length=resp.length
+      orderid=resp[length-1].booking._id
+      req.session.order_id = orderid
+
+      if (req.body.options== 'hotel') {
+        userHelper.setPayementMode(req.session.order_id).then((rep)=>{
+          res.json({hotel: true});
+        })
+
+      } else {
+        orderAmount = resp[length-1].booking.totalAmount
+        userHelper.generateRazorpay(orderid,req.session.totalAmount).then((response)=>{
+           console.log(response)
+           res.json(response)
+        })
+      }
+    }
+  }
+
+  catch(err){
+    console.log(err)
+  }
  
-  let length=resp.length
-   orderid=resp[length-1].booking._id
-   userHelper.generateRazorpay(orderid).then((response)=>{
-      console.log(response)
-      res.json(response)
-   })
- })
+ 
 })
 
 router.post('/verify-payment', (req, res) => {
@@ -279,7 +464,7 @@ router.post('/verify-payment', (req, res) => {
         )
         .then((status) => {
           console.log('Payement Sucess');
-          res.json({ status: true });
+          res.json(status);
         });
         console.log(data);
    })
@@ -288,6 +473,59 @@ router.post('/verify-payment', (req, res) => {
       res.json({ status: false });
     });
 });
+
+router.post('/forgot-password',(req,res,next)=>{
+  
+  userHelper.forgotPassword(req.body).then((response)=>{
+    req.session.forgotNumber=response.phoneNumber
+    req.session.forgotEmail= response.email
+    res.render('user/forgot-passwordotp')
+  })
+  
+})
+
+router.post('/otp-verify',(req,res)=>{ 
+  console.log(req.body);
+  const otp = req.body.otp
+  const textOtp = Number(otp.join(""));
+  const otpData = {otp: textOtp}
+  const numdata = {phoneNumber: req.session.forgotNumber}
+  Sms.otpVerify(otpData,numdata).then((resp)=>{
+    if (resp.valid) {
+      res.json({status: true})
+   }else{
+     res.send('failed verifications')
+   }
+  
+  })
+})
+
+router.post('/update-password',(req,res)=>{
+  console.log(req.body)
+  userHelper.updatePassword(req.session.forgotEmail, req.body.password).then((datas)=>{
+    console.log(datas)
+    console.log("success");
+    res.redirect("/")
+  })
+})
+
+router.get('/download-invoice',(req,res,next)=>{
+  const today = new Date();
+  const year = today.getFullYear();
+
+  const month = (`0${today.getMonth() + 1}`).slice(-2);
+  const day = today.getDate();
+  const date = (`${year}-${month}-${day}`);
+  res.render('user/success',{id:req.session.order_id,amount:req.session.totalAmount,today,roomName:req.session.roomName, checkIn: req.session.booking.checkIn,
+  checkOut: req.session.booking.checkOut,profileName:req.session.user,emailId:req.session.email, hotelName:req.session.hotelName})
+ 
+})
+
+router.get('/thank-you',(req,res,next)=>{
+ 
+  res.render('user/success-page',{users: true,profileName:req.session.user,emailId:req.session.email,})
+ 
+})
 
 router.post('/signup', function(req, res) {
   userHelper.dosignUp(req.body).then((resp)=>{

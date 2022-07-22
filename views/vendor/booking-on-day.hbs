@@ -1,0 +1,100 @@
+    <script>
+  // const reformattedArray = {{sales}}.map(x=>(x.name: x.));
+
+   console.log("uuuu")
+</script>
+    <!-- dashboard inner -->
+               <div class="midde_cont">
+                  <div class="container-fluid">
+                     <div class="row column_title">
+                        <div class="col-md-12">
+                           <div class="page_title">
+                              <h2>Sales Report</h2>
+                           </div>
+                        </div>
+                     </div>
+                     <!-- row -->
+                     <div class="row">
+                        <!-- table section -->
+                
+
+                         <div class="col-md-9">
+                           <div class="white_shd full margin_bottom_30">
+                              <div class="full graph_head">
+                                 <div class="heading1 margin_0">
+                                    <h2>Sale on {{sales.[0].booking.bookingDate}}</h2>
+                                 </div>
+                              </div>
+                              <div class="table_section padding_infor_info">
+                                 <div class="table-responsive-sm">
+                                    <table class="table table-dark">
+                                       <thead>
+                                         <tr>
+                                             <th>Sl No</th>
+                                             <th>Name</th>
+                                             <th>Phone Number</th>
+                                              <th>Email</th>
+                                               <th>Check In Date</th>
+                                             <th>Total Amount</th>
+                                             <th>Payement Status</th>
+                                            
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                           {{#each sales}}
+                                          <tr>
+                                             <td>{{inc @index}}</td>
+                                             <td>{{this.name}}</td>
+                                             <td>{{this.phoneNumber}}</td>
+                                             <td>{{this.email}}</td>
+                                             <td><span id="in{{this.booking._id}}"></span></td>
+                                              <td>{{this.booking.totalAmount}}</td>
+                                             <td>{{this.booking.status}}</td>
+                                             <script>
+                                                function strDate(data){
+                                                date = new Date(data);
+                                                year = date.getFullYear();
+                                                month = date.getMonth()+1;
+                                                dt = date.getDate();
+
+                                                if (dt < 10) {
+                                                dt = '0' + dt;
+                                                }
+                                                if (month < 10) {
+                                                month = '0' + month;
+                                                }
+
+                                                return(year+'-' + month + '-'+dt);
+                                                
+                                                
+                                                }
+
+                                                indate = strDate('{{this.booking.checkInDate}}')
+                                                
+                                                document.getElementById('in{{this.booking._id}}').innerText
+                                                = indate
+                                                
+
+                                            </script>
+                                          
+                                          </tr>
+                                         {{/each}}
+                                         
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     
+                        
+                      
+                     </div>
+                  </div>
+                 
+    
+               </div>
+               <!-- end dashboard inner -->
+            </div>
+
+ 
