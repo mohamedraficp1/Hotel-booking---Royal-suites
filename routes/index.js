@@ -19,7 +19,7 @@ function isLoggedIn(req,res, next) {
   req.user ? next() : res.sendStatus(401)
 }
 
-function isUsedLoggedIn(req,res, next) {
+function isUserLoggedIn(req,res, next) {
   req.session.userloggedIn ? next() : res.redirect('/login')
 }
 
@@ -87,6 +87,19 @@ router.post('/update-profile',( req,res)=>{
   })
 })
 
+router.post('/submit-review',( req,res)=>{
+  console.log(req.body);
+  console.log("yyyy");
+  id= mongoose.Types.ObjectId(req.body.roomid)
+  dates = new Date()
+  reviewData = {name: req.body.name,date:dates,rating: req.body.rating, content: req.body.content}
+  userHelper.addReview(req.body.vendorEmail,id, reviewData).then((data)=>{
+     res.json({status:true})
+  })
+})
+
+
+
 router.post('/update-profile-image',store.array('profile-images'), (req,res)=>{
   userHelper.doUpdateImage(req.body.email, req.files).then((data)=>{
     res.redirect('/my-profile')
@@ -101,8 +114,19 @@ router.post('/update-profile-image',store.array('profile-images'), (req,res)=>{
 router.get('/rooms/:id', (req,res)=> {
   let id= mongoose.Types.ObjectId(req.params.id)
     userHelper.getRoomDetails(id).then((data)=> {
-      res.render('user/single-room', { users: true,data: data[0] });
+      userHelper.getReview(id).then((totalreviews)=>{
+      userHelper.bookedStatus(req.session.email,id).then((bookingStatus)=>{
+      console.log(req.session.email);
+      console.log("rrrr");
+      console.log(id)
+      
+      let count = bookingStatus.length
+      count >0 ? reviewStatus = true : reviewStatus = false
+      res.render('user/single-room', { users: true,data: data[0] ,profileName:req.session.user,email: req.session.email,reviewStatus,totalreviews});
+      })
     })
+        
+  })
     
 })
 
@@ -205,7 +229,7 @@ router.post('/booking-details',(req,res)=>{
   
 })
 
-router.get('/my-profile',(req,res,next)=>{
+router.get('/my-profile',isUserLoggedIn,(req,res,next)=>{
   userHelper.getuserDetail(req.session.email).then((datas)=>{
   res.render('user/user-profile',{ users: true,profileName:datas.name,emailId:req.session.email, phone:datas.phoneNumber,address: datas.address, profilepicture: datas.profileImage[0].filename})
   console.log(datas)
@@ -218,16 +242,20 @@ router.post('/search-room',function(req, res) {
   console.log()
   userHelper.getSearchResultRooms(req.body).then((results)=>{
   userHelper.getSearchRoom(req.body).then((datas)=>{
-    res.render('user/search-results',{users: true,datas:results, content:req.session.booking,profileName:req.session.user})
-    // res.redirect('/searched-rooms')
-    console.log("hththth");
-    console.log(results)
+//  /*res.render('user/search-results',{users: true,datas:results, content:req.session.booking,profileName:req.session.user})*/
+    res.redirect('/searched-rooms')
+    
+   
   })
   })
 })
 
 router.get('/login',(req,res,next)=>{
   res.render('user/user-login')
+})
+
+router.get('/live-chat',(req,res,next)=>{
+  res.render('user/chat')
 })
 
 router.post('/confirm-delete',(req,res,next)=>{
@@ -244,11 +272,12 @@ router.post('/confirmBook',(req,res,next)=>{
   let rids= mongoose.Types.ObjectId(req.session.bookedRoomId)
   let vids= mongoose.Types.ObjectId(req.session.bookedVendorId)
   console.log("hiiiirrr")
+  let mailBody ="!!!!Congratulations!!!!...Sir, We are happy to inform that Your Booking has been confirmed, Thank You !!!"
   console.log(rids)
   let roomNo = Number(req.session.booking.rooms)  
   userHelper.getRoomDetails(rids).then((data)=> {
   userHelper.addBooking(req.session.email,req.session.booking.checkIn,req.session.booking.checkOut,roomNo,data[0],totalAmountPaid).then((response)=>{
-    mailer.doEmail(req.session.email)
+    mailer.doEmail(req.session.email, "confirmed")
     req.session.totalAmount= totalAmountPaid
     console.log(response);
    console.log('dddd');
@@ -324,45 +353,155 @@ router.post('/search-filter',(req,res)=>{
 
   if(amenities.length && filterData.length){
     userHelper.searchFilter(filterData,amenities).then((respo)=>{
-      roomfilterData = respo;
-      res.json({status:true});
+      // console.log("fdjhhkds");
+      // console.log(respo)
+      // if (price=="hl"){
+      //   console.log("hlllll");
+      //     respo.sort((a, b) => {
+      //       return a.searchResults.rooms.price - b.searchResults.rooms.price;
+      //   });
+      //   roomfilterData = respo;
+      //   res.json({status:true});
+      // }
+      // else if (price=="lh"){
+      //   console.log("lhhhh");
+      //   respo.sort((a, b) => {
+      //     return b.searchResults.rooms.price - a.searchResults.rooms.price;
+      //   });
+      //   roomfilterData = respo;
+      //   res.json({status:true});
+      // }
+      // else {
+      //   console.log("none");
+        roomfilterData = respo;
+        // res.json({status:true});
+      // }
+      
     })
     .catch(function(e) {
       console.error(e.message); 
     })
+    
   }
 
  else if(filterData.length==0 && amenities.length!=0){
     userHelper.searchFilterOne(amenities).then((respo)=>{
+    //   console.log("fdjhhkds");
+    //   console.log(respo)
+    //   if (price=="hl"){
+    //     console.log("hlllll");
+    //     respo.sort((a, b) => {
+    //       return a.searchResults.rooms.price - b.searchResults.rooms.price;
+    //   });
+    //   roomfilterData = respo;
+    //   res.json({status:true});
+    // }
+    // else if (price=="lh"){
+    //   console.log("lhh");
+    //   respo.sort((a, b) => {
+    //     return b.searchResults.rooms.price - a.searchResults.rooms.price;
+    //   });
+    //   roomfilterData = respo;
+    //   res.json({status:true});
+    // }
+    // else {
+    //   console.log("none");
       roomfilterData = respo;
-      res.json({status:true});
+      // res.json({status:true});
+    // }
     })
     .catch(function(e) {
       console.error(e.message); 
     })
+  
   }
 
   else if(amenities.length==0 && filterData.length!=0 ) {
     userHelper.searchFilterOne(filterData).then((respo)=>{
+    //   console.log("fdjhhkds");
+    //   console.log(respo)
+    //   if (price=="hl"){
+    //     console.log("hlllll");
+    //     respo.sort((a, b) => {
+    //       return a.searchResults.rooms.price - b.searchResults.rooms.price;
+    //       res.json({status:true})
+    //   });
+    //   console.log("tthh");
+    //   roomfilterData = respo;
+    //   console.log(respo[0].searchResults.rooms.price)
+    //   res.json({status:true});
+    // }
+    // else if (price=="lh"){
+    //   console.log("lhhh");
+    //   respo.sort((a, b) => {
+    //     return b.searchResults.rooms.price - a.searchResults.rooms.price;
+    //     res.json({status:true})
+    //   });
+    //   roomfilterData = respo;
+    //   console.log("filter2")
+    //   console.log(respo[0].searchResults.rooms.price)
+    //   console.log(respo)
+    //   res.json({status:true});
+    // }
+    // else {
+    //   console.log("none");
       roomfilterData = respo;
-      res.json({status:true});
+      // res.json({status:true});
+    // }
+    })
+    .catch(function(e) {
+      console.error(e.message); 
+    })
+  
+  }
+
+  else {
+    userHelper.searchdbData().then((respo)=>{
+    //   console.log("fdjhhkds");
+    //   console.log(respo)
+    //   if (price=="hl"){
+    //     console.log("hlllll");
+    //     respo.sort((a, b) => {
+    //       return a.price - b.price;
+    //   });
+    //   roomfilterData = respo;
+    //   res.json({status:true});
+    // }
+    // else if (price=="lh"){
+    //   console.log("hlllll");
+    //   respo.sort((a, b) => {
+    //     return b.price - a.price;
+    //   });
+    //   roomfilterData = respo;
+    //   res.json({status:true});
+    // }
+    // else {
+    //   console.log("none");
+      roomfilterData = respo;
+      // res.json({status:true});
+    // }
     })
     .catch(function(e) {
       console.error(e.message); 
     })
   }
 
-  else {
-    userHelper.searchdbData().then((respo)=>{
-      roomfilterData = respo;
+  if (req.body.price=="hl"){
+        console.log("hlllll");
+        roomfilterData.sort((a, b) => a.searchResults.rooms.price - b.searchResults.rooms.price);
+        res.json({status:true});
+    }
+    else if (req.body.price=="lh"){
+      console.log("hlllll");
+      roomfilterData.sort((a, b) => b.searchResults.rooms.price - a.searchResults.rooms.price);
       res.json({status:true});
-    })
-    .catch(function(e) {
-      console.error(e.message); 
-    })
-  }
+    }
+    else {
+      res.json({status:true});
+    }
   
-  })
+  
+})
 
   router.post('/contact-us',async  (req,res)=>{
     try{
@@ -509,7 +648,7 @@ router.post('/update-password',(req,res)=>{
   })
 })
 
-router.get('/download-invoice',(req,res,next)=>{
+router.get('/download-invoice',isUserLoggedIn,(req,res,next)=>{
   const today = new Date();
   const year = today.getFullYear();
 
@@ -521,7 +660,7 @@ router.get('/download-invoice',(req,res,next)=>{
  
 })
 
-router.get('/thank-you',(req,res,next)=>{
+router.get('/thank-you',isUserLoggedIn,(req,res,next)=>{
  
   res.render('user/success-page',{users: true,profileName:req.session.user,emailId:req.session.email,})
  
@@ -537,7 +676,7 @@ router.post('/signup', function(req, res) {
       else{
         res.redirect('/')
         req.session.user= req.body.name
-        req.session.userLogged= true;
+        req.session.userloggedIn= true;
       }
   })
  

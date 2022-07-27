@@ -20,14 +20,13 @@ module.exports={
             })
         })
     },
-    doLogin: (vendorData)=>{
-        return new Promise(async(resolve,reject)=>{
-           
-          let response={}
+    doLogin: async (vendorData)=>{
+
           let vendorDetail=await Admin.findOne({role:"vendor",isVerified : "approved",email: vendorData.email}) 
+          let response={}
           if(vendorDetail){
 
-              bcrypt.compare(vendorData.password,vendorDetail.password).then((status)=>{
+          const status=bcrypt.compare(vendorData.password,vendorDetail.password)
                   if(status){
                       console.log("Login success")
                       response.status=true;
@@ -35,28 +34,28 @@ module.exports={
                       response.id=vendorDetail._id
                       response.email= vendorDetail.email
                       console.log(vendorDetail)
-                      resolve(response)
+                      return response
                   }else{
                     
                     console.log("Login failed")
                     response.status=false
                     response.userErr=true
-                      resolve(response) ;
+                    return response ;
                   }
-              })
+            
               
           }
           else{
             response.status=false
             response.paswdErr=true
             console.log("login failed")
-            resolve(response) ;
+            return response ;
         }
-    
-       }) 
+   
+     
     },
-    addRoom :(roomData, vendorName, images)=>{
-        return new Promise(async(resolve,reject)=>{
+    addRoom :async(roomData, vendorName, images)=>{
+       
             let category=await Admin.updateOne({role:"vendor", name:vendorName},{$push:{rooms:{
                 roomName: roomData.roomName,
                 description:roomData.description,
@@ -75,12 +74,9 @@ module.exports={
                 roomCount: roomData.roomCount,
                 isDeleted: false,
                 createdAt: new Date(),
-                img: images}}
-        }).then((data)=>{
-            console.log(data)
-            resolve(data)
-        })
+                img: images}}, 
     })
+    return category
 },
 
 editRoom :(roomData, vendorName)=>{
@@ -104,14 +100,11 @@ editRoom :(roomData, vendorName)=>{
           'rooms.$.isDeleted': false,
           'rooms.$.createdAt': new Date(),
           }
-  }).then((data)=>{
-      console.log(data)
-      resolve(data)
   })
 })
 },
-getRoom : (vendorName)=>{
-        return new Promise(async(resolve,reject)=>{ 
+getRoom : async (vendorName)=>{
+       try{
             let displayRoom = await Admin.aggregate([
                 { $match : { name : vendorName } },
                 {
@@ -132,9 +125,12 @@ getRoom : (vendorName)=>{
                     }
                 }
             ])
-            resolve(displayRoom[0])
-            console.log(displayRoom)
-        })
+            return(displayRoom[0]) 
+          }
+
+          catch(e){
+            
+          }
     },
 
     deleteRoom:(id)=>{

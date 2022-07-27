@@ -41,8 +41,13 @@ router.get('/login', function(req, res, next) {
   
 });
 
-router.post('/login', function(req, res, next) {
-  vendorHelper.doLogin(req.body).then((response)=>{
+function isvendorloggedIn(req,res, next) {
+  req.session.vendorloggedIn ? next() : res.redirect('vendor/login')
+}
+
+router.post('/login', async(req, res, next)=> {
+ 
+    const response= await vendorHelper.doLogin(req.body)
     if(response.status){
       req.session.vendorloggedIn = true;
       req.session.name = response.vendor
@@ -60,10 +65,10 @@ router.post('/login', function(req, res, next) {
       req.session.vendorErr=true
       res.redirect('/vendor/login')
     }
-  })
+ 
 });
 
-router.get('/add-room', function(req,res) {
+router.get('/add-room',isvendorloggedIn, function(req,res) {
   adminHelper.getCategory().then((data)=>{
     res.render('vendor/room-register-form', { vendor: true, name: req.session.name,data:data })
   })
@@ -139,8 +144,9 @@ router.post('/otp-verify',(req,res)=>{
     if (response.valid) {
      
        adminHelper.doSignup(req.session.sellerData).then((response)=>{
-        req.session.vendorloggedIn = true;
-       res.redirect('/vendor')
+      //   req.session.vendorloggedIn = true;
+      //  res.redirect('/vendor')
+       res.render('user/success-regn')
     })
     }else{
       res.send('failed verifications')
@@ -163,7 +169,7 @@ router.get('/delete-room/:id',function(req,res){
     })
 })
 
-router.get('/booking-details',(req,res)=>{
+router.get('/booking-details',isvendorloggedIn,(req,res)=>{
   vendorHelper.getBookingDetails(req.session.vendorEmail).then((data)=>{
     vendorHelper.getBookingCancelDetails(req.session.vendorEmail).then((cancelledData)=>{
       vendorHelper.getReservations(req.session.vendorEmail).then((responses)=>{
@@ -182,7 +188,7 @@ router.get('/booking-details',(req,res)=>{
   
 })
 
-router.get('/sales',(req,res)=>{
+router.get('/sales',isvendorloggedIn,(req,res)=>{
   try{
     vendorHelper.getDailySales(req.session.vendorEmail).then((sales)=>{
       vendorHelper.getTotalSales(req.session.vendorEmail).then((totalSale)=>{
@@ -219,7 +225,7 @@ router.get('/sales',(req,res)=>{
 
 })
 
-router.get('/sales-details-report/:id', async(req,res)=>{
+router.get('/sales-details-report/:id', isvendorloggedIn,async(req,res)=>{
   try{
     date= req.params.id
     const sales= await vendorHelper.getSaleOnAday(req.session.vendorEmail, date)
@@ -232,7 +238,7 @@ router.get('/sales-details-report/:id', async(req,res)=>{
 
 })
 
-router.get('/edit-room/:id',async (req,res)=>{
+router.get('/edit-room/:id',isvendorloggedIn,async (req,res)=>{
   try{
     id= mongoose.Types.ObjectId(req.params.id)
     const categories=adminHelper.getCategory()

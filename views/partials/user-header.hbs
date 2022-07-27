@@ -6,8 +6,8 @@
     <!-- Offcanvas Menu Begin -->
     <div class="offcanvas-menu-overlay"></div>
     <div class="offcanvas-menu-wrapper">
-        <div class="offcanvas__logo">
-            <a href="./index.html"><img src="user/img/logo.png" alt=""></a>
+        <div class="offcanvas__logo logo-text">
+            <a href="/"><img src="/images/logo.png" alt="">Royal suites</a>
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__btn__widget">
@@ -15,11 +15,11 @@
         </div>
         <div class="offcanvas__widget">
             <ul>
-                <li><span class="icon_pin_alt"></span> 96 Ernser Vista Suite 437, NY, US</li>
-                <li><span class="icon_phone"></span> (123) 456-78-910</li>
+                <li><span class="icon_pin_alt"></span> Cochin Kerala</li>
+                <li><span class="icon_phone"></span> 9847 222 333</li>
             </ul>
         </div>
-        <div class="offcanvas__language">
+        {{!-- <div class="offcanvas__language">
             <img src="user/img/lan.png" alt="">
             <span>English</span>
             <i class="fa fa-angle-down"></i>
@@ -27,11 +27,11 @@
                 <li>English</li>
                 <li>Bangla</li>
             </ul>
-        </div>
+        </div> --}}
         <div class="offcanvas__auth">
             <ul>
-                <li><a href="#">Login</a></li>
-                <li><a href="#">Register</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup">Register</a></li>
             </ul>
         </div>
     </div>
@@ -44,8 +44,8 @@
                 <div class="row">
                     <div class="col-lg-7">
                         <ul class="header__top__widget">
-                            <li><span class="icon_pin_alt"></span> 96 Ernser Vista Suite 437, NY, US</li>
-                            <li><span class="icon_phone"></span> (123) 456-78-910</li>
+                            <li><span class="icon_pin_alt"></span> Cochin Kerala</li>
+                            <li><span class="icon_phone"></span> 9847 222 333</li>
                         </ul>
                     </div>
                     <div class="col-lg-5">
@@ -60,7 +60,7 @@
                                 </ul>
                                 {{else if profileName}}
                                  <ul>
-                                    <li><a href="#">{{profileName}}</a></li>
+                                    <li><a href="/my-profile">{{profileName}}</a></li>
                                     <li><a href="/logout">Logout</a></li>
                                     
                                 </ul>
@@ -87,7 +87,7 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <div class="header__logo">
-                            <a href="./index.html" class="logo-text"><img src="/images/logo.png" alt="">Royal suites</a>
+                            <a href="/" class="logo-text"><img src="/images/logo.png" alt="">Royal suites</a>
                         </div>
                     </div>
                     <div class="col-lg-9">
@@ -95,16 +95,15 @@
                             <nav class="header__menu">
                                 <ul class="menu__class">
                                     <li class="active"><a href="/">Home</a></li>
-                                    <li><a href="/rooms">Rooms</a></li>
-                                    <li><a href="#">About us</a>
-                                        <ul class="dropdown">
-                                            <li><a href="./about.html">About Us</a></li>
-                                            <li><a href="./room-details.html">Room Details</a></li>
-                                            <li><a href="./blog-details.html">Blog Details</a></li>
-                                        </ul>
+                                    <li><a href="/#rooms">Rooms</a></li>
+                                    <li><a href="/#aboutus">About us</a>
+                                      
+                                    </li>
+                                     <li><a href="/vendor/login">To Become Our Partner</a>
+                                      
                                     </li>
                                    
-                                    <li><a href="./contact.html">Contact</a></li>
+                                    <li><a href="/#contcus">Contact</a></li>
                                 </ul>
                             </nav>
                             <div class="header__nav__widget">

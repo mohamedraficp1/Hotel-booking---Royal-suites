@@ -55,7 +55,7 @@
           <div class="d-flex justify-content-center mb-3">
             <h4 id="imageErr"> </h4>
             <div>
-                <button class="btn btn-success my-4" type="submit">Continue</button></div>
+                <button id="continue-button" class="btn btn-success my-4" onclick="displayButon()" type="submit">Continue</button></div>
           </div>
         </form>
       </div>
@@ -164,6 +164,17 @@
 
   </div>
 </section>
+<style>
+  #payNow {
+    display: none;
+  }
+</style>
+<script>
+  function displayButon() {
+      document.getElementById("payNow").style.display="block"
+      document.getElementById("continue-button").style.display="none"
+  }
+</script>
  <script src=
 "https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js">
   </script>
@@ -231,8 +242,8 @@ function submitHandler (e) {
         method: "post",
         data: $form.serialize(),
         success:(response)=>{
-          alert(response)
-          alert(response.id)
+          //alert(response)
+          //alert(response.id)
           console.log(response)
           console.log(response.id)
           if(response.hotel){

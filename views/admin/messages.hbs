@@ -1,0 +1,90 @@
+
+
+<h2 class="text-center my-5">All Rooms</h2>
+              <table class="display table" id="table_id">
+        <thead>
+          <tr>
+            <th>Sl No</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Reply</th>
+          
+          </tr>
+        </thead>
+        <tbody>
+        {{#each response}}
+            <tr>
+              <td>{{inc @index}}</td>
+             
+                 <td>{{this.messages.name}}</td>
+                 <td>{{this.messages.email}}</td>
+                 <td>{{this.messages.message}}</td>
+                
+                <td>
+               <a  data-toggle="modal" data-target="#modalContactForm" class="btn btn-primary d-inline-block text-white" >Reply Mail</a></td>
+
+          <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Write to us</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+       <form action="/admin/send-mail-toClient" method="post">
+
+                <!-- Name Input -->
+                <div class="form-floating mb-3">
+                  <input class="form-control" id="name" name="name" value="{{this.messages.name}}" type="text" placeholder="Name"  />
+                  
+                  
+                </div>
+
+                <!-- Email Input -->
+                <div class="form-floating mb-3">
+                  <input class="form-control" id="emailAddress" name="email" value="{{this.messages.email}}" type="email" placeholder="Email Address" data-sb-validations="required,email" />
+                 
+                
+                </div>
+
+                <!-- Message Input -->
+                <div class="form-floating mb-3">
+                  <textarea class="form-control" id="message" name="message" type="text" placeholder="Message" style="height: 10rem;" data-sb-validations="required"></textarea>
+                 
+                </div>
+
+                
+
+                <!-- Submit button -->
+                <div class="d-grid">
+                  <button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Submit</button>
+                </div>
+              </form>
+
+      </div>
+      
+    </div>
+  </div>
+</div> 
+
+{{!-- <div class="text-center">
+  <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#modalContactForm">Launch
+    Modal Contact Form</a>
+</div> --}}
+            </tr>
+              <!-- Modal -->
+
+            {{/each}}
+   
+        </tbody>
+      </table>
+  
+      <script>
+
+       
+         var table = $('#table_id').DataTable();
+      </script>

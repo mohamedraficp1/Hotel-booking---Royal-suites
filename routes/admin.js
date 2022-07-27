@@ -62,6 +62,19 @@ router.get('/rooms', function(req, res, next) {
   }
 });
 
+router.get('/messages', function(req, res, next) {
+  if(req.session.adminloggedIn){
+    adminHelper.getAllmessages().then((response)=>{
+      res.render('admin/messages', { admin: true, response})
+    })
+    
+  }
+  else {
+    res.redirect('/admin/login')
+  }
+});
+
+
 router.get('/otp-verify',(req,res)=>{
   // res.header('Cache-control','no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0');
   res.render('admin/otp-verify', {login: true})
@@ -71,18 +84,18 @@ router.post('/login', function(req, res) {
   
   adminHelper.doLogin(req.body).then((response)=>{
     if(response.status){
-      // req.session.adminloggedIn = true;
-      // req.session.name = "Admin";
-      // res.redirect('/admin')
-      Sms.adminLogin().then((response)=>{
-        if (response) {
-          res.redirect('/admin/otp-verify')
-        }
-        else{
-          res.redirect('/admin/login')
-        }
+      req.session.adminloggedIn = true;
+      req.session.name = "Admin";
+      res.redirect('/admin')
+    //   Sms.adminLogin().then((response)=>{
+    //     if (response) {
+    //       res.redirect('/admin/otp-verify')
+    //     }
+    //     else{
+    //       res.redirect('/admin/login')
+    //     }
       
-    })
+    // })
   }
     else if(response.userErr){
       req.session.paswdErr= true
@@ -107,6 +120,13 @@ router.post('/otp-verify',(req,res)=>{
       res.send('failed verifications')
     }
   })
+})
+
+router.post ('/send-mail-toClient', (req,res)=>{
+  mailer.doEmail(req.body.email, req.body.message)
+  console.log(req.body)
+  console.log("body")
+  res.redirect('/admin/messages')
 })
 
 router.post('/add-category', function(req, res) {

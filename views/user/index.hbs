@@ -1,4 +1,5 @@
 
+ <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
  <!-- Hero Section Begin -->
     <section class="hero spad set-bg" data-setbg="/images/banner-images/{{data.banner.image.[0].filename}}">
         <div class="container">
@@ -20,6 +21,7 @@
                             <p>Check In</p>
                             <div class="filter__form__datepicker">
                                 <span class="icon_calendar"></span>
+                                {{!-- <input type="datetime-local"  name="checkIn"> --}}
                                 <input type="text" class="datepicker_pop check__in" name="checkIn">
                                 <i class="arrow_carrot-down"></i>
                             </div>
@@ -29,6 +31,7 @@
                             <div class="filter__form__datepicker">
                                 <span class="icon_calendar"></span>
                                 <input type="text" class="datepicker_pop check__out" name="checkOut">
+                                {{!-- <input type="datetime-local"  name="checkOut"> --}}
                                 <i class="arrow_carrot-down"></i>
                             </div>
                         </div>
@@ -37,13 +40,15 @@
                             <div class="filter__form__select">
                                 <span class="icon_group"></span>
                                 <select name="rooms">
+                                    <option value="2">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
-                                    <option value="25">25</option>
+                                    <option value="25">4</option>
+                                    <option value="25">4</option>
                                 </select>
                             </div>
                         </div>
-                         <div class="filter__form__item filter__form__item--select">
+                         {{!-- <div class="filter__form__item filter__form__item--select">
                             <p>Guest</p>
                             <div class="filter__form__select">
                                 <span class="icon_group"></span>
@@ -53,7 +58,7 @@
                                     <option value="4">4 Adult</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <button type="submit">BOOK NOW</button>
                     </form>
                 </div>
@@ -63,19 +68,19 @@
     <!-- Hero Section End -->
 
     <!-- Home About Section Begin -->
-    <section class="home-about">
+    <section class="home-about" id="aboutus">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="home__about__text">
                         <div class="section-title">
                             <h5>ABOUT US</h5>
-                            <h2>Welcome Hiroto Hotel In Street L’Abreuvoir</h2>
+                            <h2>Royal Suites</h2>
                         </div>
-                        <p class="first-para">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-                            fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
-                        <p class="last-para">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                            doloremque.</p>
+                        <p class="first-para">Royal Suites is global platform that empowers entrepreneurs and small businesses with hotels and homes by providing full stack technology that increases earnings and eases operations. Bringing affordable and trusted accommodation that guests can book instantly.
+
+</p>
+                        <p class="last-para">We strive to make the lives of our patrons easier by multiplying revenue channels and using our technological expertise to maximize demand.</p>
                         <img src="user/img/home-about/sign.png" alt="">
                     </div>
                 </div>
@@ -147,7 +152,7 @@
     <!-- Services Section End -->
 
     <!-- Home Room Section Begin -->
-    <section class="home-room spad">
+    <section class="home-room spad" id="rooms">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -190,7 +195,7 @@
     <!-- Home Room Section End -->
 
     <!-- Testimonial Section Begin -->
-    <section class="testimonial spad">
+    {{!-- <section class="testimonial spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-5">
@@ -338,7 +343,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
     <!-- Testimonial Section End -->
 
     <!-- Chooseus Section Begin -->
@@ -452,7 +457,7 @@
     </section> --}}
     <!-- Latest Blog Section End -->
 
-      <section class="contact spad">
+      <section class="contact spad" id="contactus">
         <div class="container">
             <div class="row">
                 <div class="col-lg-5 col-md-6 col-sm-5">
@@ -460,13 +465,13 @@
                         <div class="contact__widget__item">
                             <h4>Contact Us</h4>
                             <ul>
-                                <li>(123) 456-78-910</li>
-                                <li>Info.colorlib@gmail.com</li>
+                                <li>9847 222 333</li>
+                                <li>info@royalsuittes.com</li>
                             </ul>
                         </div>
                         <div class="contact__widget__item">
                             <h4>Address</h4>
-                            <p>96 Ernser Vista Suite 437, NY, <br />United Stated</p>
+                            <p>Cochin <br />Kerala</p>
                         </div>
                         <div class="contact__widget__time">
                             <h4>Opentime</h4>
@@ -536,3 +541,18 @@ function submitHandlers (e) {
     display: none;
 }   
 </style>
+
+{{!-- Flat picker --}}
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+
+config={
+dateFormat: "d.m.Y",
+ minDate: "today",
+}
+
+flatpickr("input[type=datetime-local]",config);
+
+</script>

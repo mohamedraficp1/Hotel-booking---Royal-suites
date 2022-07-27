@@ -141,6 +141,33 @@ module.exports={
   
      }) 
   },
+  bookedStatus: (emailId,id)=>{
+    return new Promise (async(resolve,reject)=>{
+      try{
+        const today = new Date();
+        let bookingDetail =  await Admin.aggregate( [{ $match : { role: "user", email: emailId }},
+                                  { $unwind : "$booking" },
+                                  {
+                                    $match: {
+                                      $and: [
+                                        { 'booking.status' : "cashPaid"  },
+                                        { 'booking.roomDetails.rooms._id' : id  },
+                                        { 'booking.checkOutDate': { $lte: today } },
+                                      ],
+                                    },
+
+                                  },
+                                ] )
+
+                              resolve (bookingDetail)
+                              console.log((today));
+                              console.log(bookingDetail);
+                            }
+      catch(e){
+        console.log(e)
+      }
+    })
+  },
 
   updatePassword: (emailId,newPassword)=>{
     return new Promise(async(resolve,reject)=>{
@@ -161,6 +188,23 @@ module.exports={
     getRoomDetails: (id)=>{
         return new Promise (async(resolve,reject)=>{
         let roomDetail =  await Admin.aggregate( [{ $match : { role: "vendor" }},{ $unwind : "$rooms" },{ $match : { 'rooms._id' : id } }] )
+        console.log(roomDetail)
+        resolve(roomDetail)
+    })
+    },
+
+
+    addReview: (emailId, roomId,review)=>{
+        return new Promise (async(resolve,reject)=>{
+        let roomDetail =  await Admin.updateOne({ 
+          email: emailId,
+          "rooms._id": roomId, 
+        }, 
+        {
+          $push: {
+            "rooms.$.reviews": review
+          }
+        })
         console.log(roomDetail)
         resolve(roomDetail)
     })
@@ -231,7 +275,41 @@ module.exports={
     })
     },
 
-    getlastBooking: (emailId)=>{
+    getReview:(roomid)=>{
+      return new Promise (async(resolve,reject)=>{
+        try{
+            let reviewDetail =  await Admin.aggregate([
+  {
+    '$match': {
+      'role': 'vendor'
+    }
+  }, {
+    '$unwind': {
+      'path': '$rooms'
+    }
+  }, {
+    '$match': {
+      'rooms.isDeleted': false, 
+      'rooms._id': roomid
+    }
+  }, {
+    '$unwind': {
+      'path': '$rooms.reviews'
+    }
+  }
+])
+                resolve(reviewDetail)
+                console.log(reviewDetail)
+                console.log("hjghjh");
+        }
+
+        catch(e){
+            console.log(e);
+        }
+  })
+    }
+
+    ,getlastBooking: (emailId)=>{
       return new Promise (async(resolve,reject)=>{
           try{
               let bookingDetail =  await Admin.aggregate( [
@@ -284,7 +362,9 @@ module.exports={
                 //  }
                 // }
                 ] )
+                console.log("ytyty")
                 console.log(result);
+
                   resolve(result)
         }
         catch(e){

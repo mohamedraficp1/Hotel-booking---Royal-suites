@@ -4,7 +4,9 @@ const nodemailer = require("nodemailer");
 module.exports = {
   doEmail: (mail, content) => {
     const transporter = nodemailer.createTransport({
-      service: "hotmail",
+      service: "smtp.office365.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.NODE_MAILER_USERNAMRE,
         pass: process.env.NODE_MAILER_PASSWORD,
@@ -14,7 +16,7 @@ module.exports = {
       from: "royalsuites01@outlook.com",
       to: mail,
       subject: "Room Booking",
-      text: "!!!!Congratulations!!!!...Sir, We are happy to inform that Your Booking has been"+ content+ ", Thank You !!!",
+      text: content,
     };
 
     transporter.sendMail(options, function (err, info) {

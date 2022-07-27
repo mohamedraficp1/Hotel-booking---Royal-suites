@@ -5,36 +5,33 @@ var mongoose = require('mongoose')
 const nodemailer = require('nodemailer')
 
 module.exports={
-    doLogin: (userData)=>{
-        return new Promise(async(resolve,reject)=>{
+    doLogin: async (userData)=>{
           let response={}
           let admindetail=await Admin.findOne({email: userData.email, role: "admin"}) 
           if(admindetail){
-
-              bcrypt.compare(userData.password,admindetail.password).then((status)=>{
-                  
+            let status=  bcrypt.compare(userData.password,admindetail.password)
                   if(status){
                       console.log("Login success")
                       response.status=true;
-                      resolve(response)
+                      return response
                   }else{
                     
                     console.log("Login failed")
                     response.status=false
                     response.userErr=true
-                      resolve(response) ;
+                    return response ;
                   }
-              })
+              
               
           }
           else{
             response.status=false
             response.paswdErr=true
             console.log("login failed")
-            resolve(response) ;
+            return response ;
         }
     
-       }) 
+     
     },
     doSignup: (vendorData)=>{
         return new Promise(async(resolve,reject)=>{
@@ -215,6 +212,15 @@ module.exports={
         })
     },
 
+    getAllmessages : ()=>{
+      return new Promise(async(resolve,reject)=>{ 
+          let displaymessages = await Admin.aggregate( [{$match:{role:"admin"}}, { $unwind : "$messages" } ] )
+          console.log(displaymessages);
+          resolve(displaymessages)
+          
+      })
+  },
+
     getAllUsers : ()=>{
         return new Promise(async(resolve,reject)=>{ 
             let displayUser = await Admin.aggregate(
@@ -259,9 +265,6 @@ module.exports={
                 image: images,
                 bannerIsDeleted: false
             }}
-        }).then((data)=>{
-            console.log(data)
-            resolve(data)
         })
     })
     },

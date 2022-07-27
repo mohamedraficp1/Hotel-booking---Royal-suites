@@ -47,8 +47,11 @@ const adminSchema = new mongoose.Schema({
         reviews:[{
             name:String,
             date: Date,
+            rating: Number,
             content: String,
-        }],
+        }
+    
+        ],
         wishlist:Array,
         img: Array,
         isDeleted: Boolean,

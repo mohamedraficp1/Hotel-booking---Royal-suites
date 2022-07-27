@@ -1,3 +1,6 @@
+
+
+ 
  <!-- Room Details Slider Begin -->
     <div class="room-details-slider">
         <div class="container">
@@ -111,3 +114,210 @@
         </div>
     </section>
     <!-- Rooms Details Section End -->
+<div class="container" id="bookNow">
+    <div class="row mb-5">
+        <div class="col">
+             <h2 class="mb-4">Room Reviews</h2>
+             <style>
+                 #hidden-rating {
+                     width:0%;
+                 }
+
+                 .star-ratings {
+                unicode-bidi: bidi-override;
+                color: #ccc;
+                font-size: 64px;
+                position: relative;
+                margin: 0;
+                padding: 0;
+                }
+                .star-ratings .fill-ratings {
+                color: #e7711b;
+                padding: 0;
+                position: absolute;
+                z-index: 1;
+                display: block;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+                }
+                .star-ratings .fill-ratings span {
+                display: inline-block;
+                }
+                .star-ratings .empty-ratings {
+                padding: 0;
+                display: block;
+                z-index: 0;
+                }
+
+             </style>
+            {{#each totalreviews}}
+                 <h4 class="mb-2">{{this.rooms.reviews.name}}</h4>
+                 <div class="star-ratings">
+                <div class="fill-ratings" id="hidden-rating{{this.rooms.reviews._id}}">
+                    <span>★★★★★</span>
+                </div>
+                <div class="empty-ratings">
+                    <span>★★★★★</span>
+                </div>
+                </div>
+              
+                 <script>
+                   if  ({{this.rooms.reviews.rating}}=="1"){
+                        document.getElementById("hidden-rating{{this.rooms.reviews._id}}").style.width = "20%"
+                        console.log("true")
+                   }
+                   else if  ({{this.rooms.reviews.rating}}=="2"){
+                        document.getElementById("hidden-rating{{this.rooms.reviews._id}}").style.width = "40%"
+                        console.log("true")
+                   } else if  ({{this.rooms.reviews.rating}}=="3"){
+                        document.getElementById("hidden-rating{{this.rooms.reviews._id}}").style.width = "60%"
+                        console.log("true")
+                   }else if
+
+                    ({{this.rooms.reviews.rating}}=="4"){
+                        document.getElementById("hidden-rating{{this.rooms.reviews._id}}").style.width = "80%"
+                        console.log("true")
+                   }else if
+
+                    ({{this.rooms.reviews.rating}}=="5"){
+                        document.getElementById("hidden-rating{{this.rooms.reviews._id}}").style.width = "100%"
+                        console.log("true")
+                   }
+
+                   else {
+                     
+                        document.getElementById("hidden-rating").style.width = "0%"
+                        console.log("true")
+                   }
+                 </script>
+                 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+                 <script>
+                     $(document).ready(function () {
+                   
+                    var star_rating_width = $(".fill-ratings span").width();
+                   
+                    $(".star-ratings").width(star_rating_width);
+                    });
+
+                 </script>
+
+                <h5 class="mb-5"> {{this.rooms.reviews.content}}</h5>
+             {{/each}}
+        </div> 
+    </div>
+</div>
+    
+
+
+
+{{#if reviewStatus}}
+    <section>
+        <div class="container mb-5">
+            <div class="row">
+               
+                <div class="col-lg-12">
+ <h2>Submit a review</h2>
+<form id="review-form">
+                   <div class="star-rating">
+  <input type="radio" id="5-stars" name="rating" value="5" />
+  <label for="5-stars" class="star">&#9733;</label>
+  <input type="radio" id="4-stars" name="rating" value="4" />
+  <label for="4-stars" class="star">&#9733;</label>
+  <input type="radio" id="3-stars" name="rating" value="3" />
+  <label for="3-stars" class="star">&#9733;</label>
+  <input type="radio" id="2-stars" name="rating" value="2" />
+  <label for="2-stars" class="star">&#9733;</label>
+  <input type="radio" id="1-star" name="rating" value="1" />
+  <label for="1-star" class="star">&#9733;</label>
+</div>
+  <input type="text" value="{{profileName}}" name="name" hidden>
+  <input type="text" value="{{data.rooms._id}}" name="roomid" hidden>
+   <input type="text" value="{{data.email}}" name="vendorEmail" hidden>
+
+  
+<textarea id="editor" name="content" placeholder="Start writing your review"  rows="4" style="width: 75%; display: block"></textarea>
+<button type="submit" class="btn btn-success my-5">Submit Review</button>
+</form>
+ 
+                </div>
+             </div>
+          </div>
+    </section>
+    {{/if}}
+    <style>
+      .star-rating {
+ 
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:1.5em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:5em;
+}
+
+.star-rating input {
+  display:none;
+}
+
+.star-rating label {
+  color:#ccc;
+  cursor:pointer;
+}
+
+.star-rating :checked ~ label {
+  color:#f90;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color:#fc0;
+}
+
+/* explanation */
+
+article {
+  background-color:#ffe;
+  box-shadow:0 0 1em 1px rgba(0,0,0,.25);
+  color:#006;
+  font-family:cursive;
+  font-style:italic;
+  margin:4em;
+  max-width:30em;
+  padding:2em;
+}
+    </style>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+     <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js">
+  </script>
+<script>
+
+const $contineForm =$('#review-form')
+$contineForm.on('submit', submitionHandler)
+
+function submitionHandler (e) {
+  e.preventDefault()
+
+   $.ajax({
+        url: '/submit-review',   
+        method: "post",
+        data: $contineForm.serialize(),
+            success:(response)=>{
+                if(response.status){
+                     swal("Succesfully updated Your feedback");
+             $('#bookNow').load(location.href + " #bookNow");
+                }
+               
+        }
+
+    }).done(response => {
+    console.log(response)
+  })
+}
+
+</script>
+
+  
