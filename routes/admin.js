@@ -1,21 +1,16 @@
-var express = require('express');
-var router = express.Router();
-var Admin= require('../models/admin')
+const express = require('express');
+const router = express.Router();
 const adminHelper= require("../helpers/adminHelper");
-const async = require('hbs/lib/async');
 const mailer = require('../config/email')
 const store= require('../config/multer')
-var mongoose = require('mongoose')
-var Sms =require('../config/verify')
-const nodemailer = require('nodemailer');
-const client = require('twilio')('AC1771c44d73f01a6a895be8eeb56b103f', 'ff24b7bc240cf38d8d18c7efaf48d157');
-const multer = require('multer');
+const mongoose = require('mongoose')
+const Sms =require('../config/verify')
 const { Store } = require('express-session');
-const { response } = require('../app');
+
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   // res.header('Cache-control','no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0');
  let catExist= req.session.catExist
   if(req.session.adminloggedIn){
@@ -39,7 +34,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.get('/login', function(req, res, next) {
+router.get('/login', function(req, res) {
   if(req.session.adminloggedIn){
     res.redirect('/admin')
   }
@@ -50,7 +45,7 @@ router.get('/login', function(req, res, next) {
   }
 });
 
-router.get('/rooms', function(req, res, next) {
+router.get('/rooms', function(req, res) {
   if(req.session.adminloggedIn){
     adminHelper.getAllRoom().then((response)=>{
       res.render('admin/rooms', { admin: true, roomData:response})
@@ -62,7 +57,7 @@ router.get('/rooms', function(req, res, next) {
   }
 });
 
-router.get('/messages', function(req, res, next) {
+router.get('/messages', function(req, res) {
   if(req.session.adminloggedIn){
     adminHelper.getAllmessages().then((response)=>{
       res.render('admin/messages', { admin: true, response})
@@ -148,21 +143,21 @@ router.post('/add-category', function(req, res) {
 
 router.get('/delete-category/:id',function(req, res) {
     let id= mongoose.Types.ObjectId(req.params.id)
-    adminHelper.deleteCategory(id).then((resp)=>{
+    adminHelper.deleteCategory(id).then(()=>{
       res.redirect('/admin')
     })
 })
 
 router.get('/approve-vendor/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
-  adminHelper.approveVendor(id).then((resp)=>{
+  adminHelper.approveVendor(id).then(()=>{
     res.redirect('/admin')
   })
 })
 
 router.get('/reject-vendor/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
-  adminHelper.rejectVendor(id).then((resp)=>{
+  adminHelper.rejectVendor(id).then(()=>{
     res.redirect('/admin')
   })
 })
@@ -176,7 +171,7 @@ router.get('/category/:id',function(req, res) {
 
 router.post('/edit-category/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
-  adminHelper.updateCategory(id,req.body) .then((resp)=>{
+  adminHelper.updateCategory(id,req.body) .then(()=>{
     console.log(req.body)
     res.redirect('/admin')
     console.log(req.body)
@@ -215,14 +210,14 @@ router.get('/change-banner', function(req,res){
 
 router.get('/block-user/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
-  adminHelper.blockuser(id).then((resp)=>{
+  adminHelper.blockuser(id).then(()=>{
     res.redirect('/admin/users')
   })
 })
 
 router.get('/unblock-user/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
-  adminHelper.unblockuser(id).then((resp)=>{
+  adminHelper.unblockuser(id).then(()=>{
     res.redirect('/admin/users')
   })
 })
@@ -252,7 +247,6 @@ router.get('/sales',async function(req,res){
 })
 
 router.post('/change-banner-image', store.array('banner-images'), (req, res) => {
-    let images = req.files
     console.log(req.body)
     console.log(req.files)
     adminHelper.changeBannerImage(req.body, req.files). then((response)=>{
@@ -264,7 +258,7 @@ router.post('/change-banner-image', store.array('banner-images'), (req, res) => 
 router.get('/delete-banner/:id',function(req, res) {
   let id= mongoose.Types.ObjectId(req.params.id)
   console.log(id);
-  adminHelper.deleteBanner(id).then((resp)=>{
+  adminHelper.deleteBanner(id).then(()=>{
     res.redirect('/admin/change-banner')
   })
 })
